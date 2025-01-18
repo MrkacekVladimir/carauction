@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.Application", "CarAuctionApp.Application\CarAuctionApp.Application.csproj", "{67D4C03A-595E-42AD-BB0A-18DC4185B606}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.Domain", "CarAuctionApp.Domain\CarAuctionApp.Domain.csproj", "{44CA4A85-58DD-417F-B795-9C7F4F0C6CF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.Infrastructure", "CarAuctionApp.Infrastructure\CarAuctionApp.Infrastructure.csproj", "{4B7759B6-6F68-441A-9D2A-42D8FCFB7239}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.WebBlazor", "CarAuctionApp.WebBlazor\CarAuctionApp.WebBlazor.csproj", "{EF7F52D6-8064-46E4-8AE7-B7F598ADFB65}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.WebApi", "CarAuctionApp.WebApi\CarAuctionApp.WebApi.csproj", "{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67D4C03A-595E-42AD-BB0A-18DC4185B606}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67D4C03A-595E-42AD-BB0A-18DC4185B606}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67D4C03A-595E-42AD-BB0A-18DC4185B606}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67D4C03A-595E-42AD-BB0A-18DC4185B606}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44CA4A85-58DD-417F-B795-9C7F4F0C6CF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44CA4A85-58DD-417F-B795-9C7F4F0C6CF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44CA4A85-58DD-417F-B795-9C7F4F0C6CF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44CA4A85-58DD-417F-B795-9C7F4F0C6CF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B7759B6-6F68-441A-9D2A-42D8FCFB7239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B7759B6-6F68-441A-9D2A-42D8FCFB7239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B7759B6-6F68-441A-9D2A-42D8FCFB7239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B7759B6-6F68-441A-9D2A-42D8FCFB7239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF7F52D6-8064-46E4-8AE7-B7F598ADFB65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF7F52D6-8064-46E4-8AE7-B7F598ADFB65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF7F52D6-8064-46E4-8AE7-B7F598ADFB65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF7F52D6-8064-46E4-8AE7-B7F598ADFB65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
