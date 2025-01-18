@@ -8,5 +8,14 @@ internal sealed class AuctionBidTypeConfiguration : IEntityTypeConfiguration<Auc
 {
     public void Configure(EntityTypeBuilder<AuctionBid> builder)
     {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id)
+          .IsRequired()
+          .ValueGeneratedOnAdd();
+
+        builder.HasOne(x => x.User)
+        .WithMany()
+        .HasForeignKey(x => x.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
 }

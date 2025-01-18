@@ -1,8 +1,9 @@
 using CarAuctionApp.WebApi.Extensions;
 using CarAuctionApp.Infrastructure.Persistence.Extensions;
-using CarAuctionApp.Infrastructure.Persistence;
 using Scalar.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using CarAuctionApp.WebApi.Routes;
+using CarAuctionApp.WebApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,15 +20,13 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 
     await app.ApplyMigrationsAsync();
+    await app.SeedDevelopmentData();
 }
 
 app.UseHttpsRedirection();
 
-app.MapGet("/auctions", async (AuctionDbContext dbContext) =>
-{
-    var auctions = await dbContext.Auctions.ToListAsync();
-    return Results.Json(auctions);
-}).WithName("GetAuctions");
+app.MapAuctionRoutes();
+app.MapHub<AuctionHub>("/hubs/auction");
 
 app.Run();
 
