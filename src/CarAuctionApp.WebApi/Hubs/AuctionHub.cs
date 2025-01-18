@@ -2,14 +2,13 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace CarAuctionApp.WebApi.Hubs;
 
-internal interface IAuctionHubClient
+public interface IAuctionHubClient
 {
     Task ReceiveBidUpdate(Guid auctionId, decimal bidAmount);
 }
 
-internal class AuctionHub : Hub<IAuctionHubClient>
+public class AuctionHub : Hub<IAuctionHubClient>
 {
-
     public async Task JoinAuctionGroup(Guid auctionId)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, auctionId.ToString());

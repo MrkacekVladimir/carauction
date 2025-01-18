@@ -1,0 +1,69 @@
+﻿@page "/auctions"
+@attribute [StreamRendering]
+@using CarAuctionApp.Domain.Entities
+@inject HttpClient Http
+
+<h3>AuctionList</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (isLoading)
+        {
+            <tr>
+                <td colspan="3">Loading...</td>
+            </tr>
+        }
+        else if (isError)
+        {
+            <tr>
+                <td colspan="3">Failed to fetch data.</td>
+            </tr>
+        }
+
+        else
+        {
+            foreach (var auction in auctions)
+            {
+                <tr>
+                    <th>@auction.Id</th>
+                    <td>@auction.Title</td>
+                    <td><NavLink class="btn btn-primary" href="@($"/auctions/{auction.Id}")">View detail</NavLink></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+
+
+    record AuctionDto(Guid Id, string Title);
+
+    private List<AuctionDto> auctions;
+    private bool isLoading = true;
+    private bool isError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            auctions = await Http.GetFromJsonAsync<List<AuctionDto>>("https://localhost:7215/auctions/");
+        }
+        catch (Exception)
+        {
+            isError = true;
+        }
+        finally {
+            isLoading = false;
+        }
+    }
+
+}

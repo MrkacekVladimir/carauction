@@ -8,6 +8,8 @@ using CarAuctionApp.WebApi.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+builder.Services.AddSignalR();
+builder.Services.AddCors();
 
 string connectionString = builder.Configuration.GetConnectionString("Postgres")!;
 builder.Services.AddPersistence(connectionString);
@@ -24,7 +26,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 app.MapAuctionRoutes();
 app.MapHub<AuctionHub>("/hubs/auction");
 

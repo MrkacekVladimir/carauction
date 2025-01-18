@@ -21,7 +21,7 @@ public class Auction
     public AuctionBid AddBid(User user, decimal amount)
     {
         AuctionBid? maxBid = Bids.MaxBy(b => b.Amount);
-        if (maxBid is not null && maxBid.Amount <= amount)
+        if (maxBid is not null && maxBid.Amount >= amount)
         {
             //TODO: Custom exception for business logic
             throw new Exception($"Cannot create a bid with the same or lower amount. Current: {maxBid.Amount}, provided: {amount}.");
