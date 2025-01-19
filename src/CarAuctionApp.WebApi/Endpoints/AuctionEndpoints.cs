@@ -1,20 +1,20 @@
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using CarAuctionApp.Domain;
 using CarAuctionApp.Domain.Auctions.Entities;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Auctions.ValueObjects;
 using CarAuctionApp.Persistence;
 using CarAuctionApp.WebApi.Hubs;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarAuctionApp.WebApi.Endpoints;
 
-internal record CreateAuctionModel(string Title);
-internal record CreateBidModel(decimal Amount);
+public record CreateAuctionModel(string Title);
+public record CreateBidModel(decimal Amount);
 
-internal record AuctionBidUserDto(Guid Id, string Username);
-internal record AuctionBidDto(Guid Id, decimal Amount, AuctionBidUserDto User);
-internal record AuctionListItemDto(Guid Id, string Title, IEnumerable<AuctionBidDto> bids);
+public record AuctionBidUserDto(Guid Id, string Username);
+public record AuctionBidDto(Guid Id, decimal Amount, AuctionBidUserDto User);
+public record AuctionListItemDto(Guid Id, string Title, IEnumerable<AuctionBidDto> bids);
 
 internal static class AuctionEndpoints
 {

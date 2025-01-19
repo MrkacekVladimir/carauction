@@ -4,6 +4,7 @@ namespace CarAuctionApp.Domain.Users.Repositories;
 
 public interface IUserRepository
 {
+    Task<User?> GetById(Guid id);
     Task<bool> IsUsernameAvailableAsync(string username);
     Task AddAsync(User user);
 }

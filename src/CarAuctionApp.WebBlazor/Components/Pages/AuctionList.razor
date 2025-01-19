@@ -57,8 +57,9 @@
             HttpClient Http = HttpClientFactory.CreateClient("CarAuctionApp.WebApi");
             auctions = await Http.GetFromJsonAsync<List<AuctionDto>>("/auctions") ?? new List<AuctionDto>();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine(ex.Message);
             isError = true;
         }
         finally {

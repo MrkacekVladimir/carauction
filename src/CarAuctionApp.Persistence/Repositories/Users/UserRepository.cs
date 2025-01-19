@@ -18,6 +18,11 @@ public class UserRepository : IUserRepository
         return Task.CompletedTask;
     }
 
+    public Task<User?> GetById(Guid id)
+    {
+        return _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+    }
+
     public Task<bool> IsUsernameAvailableAsync(string username)
     {
         return _dbContext.Users.AnyAsync(u => u.Username == username);

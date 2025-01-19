@@ -1,0 +1,16 @@
+services:
+
+  carauctionapp.webapi:
+    image: ${DOCKER_REGISTRY-}carauctionappwebapi
+    build:
+      context: .
+      dockerfile: CarAuctionApp.WebApi/Dockerfile
+
+  carauctionapp.webblazor:
+    image: ${DOCKER_REGISTRY-}carauctionappwebblazor
+    build:
+      context: .
+      dockerfile: CarAuctionApp.WebBlazor/Dockerfile
+
+  carauctionapp.postgres:
+    image: postgres:17

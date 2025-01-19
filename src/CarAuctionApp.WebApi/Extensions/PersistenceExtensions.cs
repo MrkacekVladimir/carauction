@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarAuctionApp.WebApi.Extensions;
 
-public static class PersistenceExtensions
+internal static class PersistenceExtensions
 {
     public static async Task ApplyMigrationsAsync(this WebApplication app)
     {

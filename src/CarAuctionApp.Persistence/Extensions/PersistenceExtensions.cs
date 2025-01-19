@@ -1,3 +1,4 @@
+using CarAuctionApp.Domain;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Users.Repositories;
 using CarAuctionApp.Persistence.Interceptors;
@@ -14,6 +15,7 @@ public static class PersistenceExtensions
     {
         services.AddScoped<IAuctionRepository, AuctionRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUnitOfWork, AuctionDbContext>();
 
         services.AddDbContextPool<AuctionDbContext>((sp, options) =>
         {

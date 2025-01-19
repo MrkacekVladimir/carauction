@@ -7,7 +7,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpClient("CarAuctionApp.WebApi", client =>
 {
-    client.BaseAddress = new Uri("https://carauctionapp-webapi");
+    client.BaseAddress = new Uri("http://carauctionapp.webapi:5000");
 });
 
 var app = builder.Build();
