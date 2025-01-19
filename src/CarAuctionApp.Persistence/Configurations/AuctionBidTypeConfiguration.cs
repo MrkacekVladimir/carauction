@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using CarAuctionApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using CarAuctionApp.Domain.Auctions.Entities;
 
-namespace CarAuctionApp.Infrastructure.Persistence.Configurations;
+namespace CarAuctionApp.Persistence.Configurations;
 
 internal sealed class AuctionBidTypeConfiguration : IEntityTypeConfiguration<AuctionBid>
 {
@@ -12,6 +12,13 @@ internal sealed class AuctionBidTypeConfiguration : IEntityTypeConfiguration<Auc
         builder.Property(x => x.Id)
           .IsRequired()
           .ValueGeneratedOnAdd();
+
+        builder.OwnsOne(x => x.Amount, y =>
+        {
+            y.Property(x => x.Value)
+                .HasColumnName("Amount")
+                .IsRequired();
+        });
 
         builder.HasOne(x => x.User)
         .WithMany()

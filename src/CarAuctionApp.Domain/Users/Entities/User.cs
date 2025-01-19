@@ -1,4 +1,4 @@
-namespace CarAuctionApp.Domain.Entities;
+namespace CarAuctionApp.Domain.Users.Entities;
 
 public class User
 {

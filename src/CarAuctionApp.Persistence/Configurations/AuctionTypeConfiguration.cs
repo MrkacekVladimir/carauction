@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using CarAuctionApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using CarAuctionApp.Domain.Auctions.Entities;
 
-namespace CarAuctionApp.Infrastructure.Persistence.Configurations;
+namespace CarAuctionApp.Persistence.Configurations;
 
 internal sealed class AuctionTypeConfiguration : IEntityTypeConfiguration<Auction>
 {
@@ -13,7 +13,7 @@ internal sealed class AuctionTypeConfiguration : IEntityTypeConfiguration<Auctio
           .IsRequired()
           .ValueGeneratedOnAdd();
 
-        builder.HasMany<AuctionBid>(x => x.Bids)
+        builder.HasMany(x => x.Bids)
           .WithOne(x => x.Auction)
           .HasForeignKey(x => x.AuctionId)
           .OnDelete(DeleteBehavior.Cascade);

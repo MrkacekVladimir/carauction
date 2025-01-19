@@ -1,5 +1,5 @@
-using CarAuctionApp.Domain.Entities;
-using CarAuctionApp.Infrastructure.Persistence;
+using CarAuctionApp.Domain.Users.Entities;
+using CarAuctionApp.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarAuctionApp.WebApi.Extensions;

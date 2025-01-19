@@ -2,8 +2,6 @@ using CarAuctionApp.WebBlazor.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
@@ -14,8 +12,6 @@ builder.Services.AddHttpClient("CarAuctionApp.WebApi", client =>
 
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -25,7 +21,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 
 app.UseAntiforgery();
 

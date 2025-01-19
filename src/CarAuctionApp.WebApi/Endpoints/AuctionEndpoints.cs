@@ -1,17 +1,21 @@
-using CarAuctionApp.Domain.Entities;
-using CarAuctionApp.Infrastructure.Persistence;
+using CarAuctionApp.Domain;
+using CarAuctionApp.Domain.Auctions.Entities;
+using CarAuctionApp.Domain.Auctions.Repositories;
+using CarAuctionApp.Domain.Auctions.ValueObjects;
+using CarAuctionApp.Persistence;
 using CarAuctionApp.WebApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
-namespace CarAuctionApp.WebApi.Routes;
+namespace CarAuctionApp.WebApi.Endpoints;
 
 record CreateAuctionModel(string Title);
 record CreateBidModel(decimal Amount);
 
-internal static class AuctionRoutes
+internal static class AuctionEndpoints
 {
-    public static void MapAuctionRoutes(this WebApplication app)
+    public static void MapAuctionEndpoints(this WebApplication app)
     {
         var auctionsGroup = app.MapGroup("/auctions");
 
@@ -43,24 +47,28 @@ internal static class AuctionRoutes
             return Results.Json(bids);
         }).WithName("GetAuctionBids");
 
-        auctionsGroup.MapPost("/{auctionId:Guid}/bids", async (Guid auctionId, CreateBidModel model, AuctionDbContext dbContext, IHubContext<AuctionHub, IAuctionHubClient> hubContext) =>
+        auctionsGroup.MapPost("/{auctionId:Guid}/bids", async (
+            Guid auctionId,
+            CreateBidModel model,
+            IAuctionRepository auctionRepository,
+            IUnitOfWork unitOfWork,
+            IHubContext<AuctionHub, IAuctionHubClient> hubContext,
+            AuctionDbContext dbContext
+            ) =>
         {
-            var auction = await dbContext.Auctions.Include(x => x.Bids).FirstOrDefaultAsync(x => x.Id == auctionId);
+            //TODO: remove fake user 
+            var user = await dbContext.Users.FirstAsync();
+
+            var auction = await auctionRepository.GetById(auctionId);
             if (auction is null)
             {
                 return Results.NotFound();
             }
 
-            //TODO: remove fake user 
-            var user = await dbContext.Users.FirstAsync();
-            if (user is null)
-            {
-                return Results.NotFound();
-            }
+            BidAmount amount = new(model.Amount);
+            auction.AddBid(user, amount);
 
-            auction.AddBid(user, model.Amount);
-
-            await dbContext.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync();
 
             await hubContext.Clients.Group(auctionId.ToString()).ReceiveBidUpdate(auctionId, model.Amount);
 

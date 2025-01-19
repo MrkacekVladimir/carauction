@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using CarAuctionApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using CarAuctionApp.Domain.Users.Entities;
 
-namespace CarAuctionApp.Infrastructure.Persistence.Configurations;
+namespace CarAuctionApp.Persistence.Configurations;
 
 internal sealed class UserTypeConfiguration : IEntityTypeConfiguration<User>
 {

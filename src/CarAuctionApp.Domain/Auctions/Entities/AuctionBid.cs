@@ -1,4 +1,7 @@
-namespace CarAuctionApp.Domain.Entities;
+using CarAuctionApp.Domain.Auctions.ValueObjects;
+using CarAuctionApp.Domain.Users.Entities;
+
+namespace CarAuctionApp.Domain.Auctions.Entities;
 
 public class AuctionBid
 {
@@ -7,7 +10,7 @@ public class AuctionBid
 
     }
 
-    public AuctionBid(Auction auction, User user, decimal amount)
+    public AuctionBid(Auction auction, User user, BidAmount amount)
     {
         Auction = auction;
         User = user;
@@ -22,6 +25,6 @@ public class AuctionBid
     public Guid UserId { get; private set; }
     public User User { get; private set; } = null!;
 
-    public decimal Amount { get; private set; }
+    public BidAmount Amount { get; private set; }
 
 }

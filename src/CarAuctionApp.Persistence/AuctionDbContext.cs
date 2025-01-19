@@ -1,10 +1,14 @@
-using CarAuctionApp.Domain.Entities;
+using CarAuctionApp.Domain;
+using CarAuctionApp.Domain.Auctions.Entities;
+using CarAuctionApp.Domain.Users.Entities;
+using CarAuctionApp.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarAuctionApp.Infrastructure.Persistence;
+namespace CarAuctionApp.Persistence;
 
-public class AuctionDbContext : DbContext
+public class AuctionDbContext : DbContext, IUnitOfWork
 {
+
     public AuctionDbContext(DbContextOptions options) : base(options)
     {
     }
@@ -16,6 +20,7 @@ public class AuctionDbContext : DbContext
     public DbSet<Auction> Auctions { get; private set; } = null!;
     public DbSet<AuctionBid> AuctionBids { get; private set; } = null!;
     public DbSet<User> Users { get; private set; } = null!;
+    public DbSet<OutboxMessage> OutboxMessages { get; private set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
