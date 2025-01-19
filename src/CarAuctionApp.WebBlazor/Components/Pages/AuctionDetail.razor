@@ -1,6 +1,6 @@
 @page "/auctions/{AuctionId:guid}"
 @using Microsoft.AspNetCore.SignalR.Client
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 @rendermode InteractiveServer
 @implements IAsyncDisposable
 
@@ -41,7 +41,8 @@ else
     {
         try
         {
-            var auctionData = await Http.GetFromJsonAsync<object>("https://localhost:7215/auctions/" + AuctionId);
+            HttpClient Http = HttpClientFactory.CreateClient("CarAuctionApp.WebApi");
+            var auctionData = await Http.GetFromJsonAsync<object>("/auctions/" + AuctionId);
             if (auctionData != null)
             {
                 await InitializeSignalRConnection();

@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.WebBlazor", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.WebApi", "CarAuctionApp.WebApi\CarAuctionApp.WebApi.csproj", "{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.AppHost", "CarAuctionApp.AppHost\CarAuctionApp.AppHost.csproj", "{44A7EA56-BFB3-4020-BF3C-CD7BA4C35C31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.ServiceDefaults", "CarAuctionApp.ServiceDefaults\CarAuctionApp.ServiceDefaults.csproj", "{48E406E6-851D-4723-A8B1-602283AFE76E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CD62A97-06F6-4A67-BDA8-E46A82EF552F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44A7EA56-BFB3-4020-BF3C-CD7BA4C35C31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44A7EA56-BFB3-4020-BF3C-CD7BA4C35C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44A7EA56-BFB3-4020-BF3C-CD7BA4C35C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44A7EA56-BFB3-4020-BF3C-CD7BA4C35C31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48E406E6-851D-4723-A8B1-602283AFE76E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48E406E6-851D-4723-A8B1-602283AFE76E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48E406E6-851D-4723-A8B1-602283AFE76E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48E406E6-851D-4723-A8B1-602283AFE76E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,7 @@
 ﻿@page "/auctions"
 @attribute [StreamRendering]
 @using CarAuctionApp.Domain.Entities
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 
 <h3>AuctionList</h3>
 
@@ -55,7 +55,8 @@
     {
         try
         {
-            auctions = await Http.GetFromJsonAsync<List<AuctionDto>>("https://localhost:7215/auctions/");
+            HttpClient Http = HttpClientFactory.CreateClient("CarAuctionApp.WebApi");
+            auctions = await Http.GetFromJsonAsync<List<AuctionDto>>("/auctions");
         }
         catch (Exception)
         {

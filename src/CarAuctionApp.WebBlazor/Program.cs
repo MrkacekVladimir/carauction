@@ -2,12 +2,19 @@ using CarAuctionApp.WebBlazor.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("CarAuctionApp.WebApi", client =>
+{
+    client.BaseAddress = new Uri("https://carauctionapp-webapi");
+});
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
