@@ -10,8 +10,4 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Auctions\Services\" />
-  </ItemGroup>
-
 </Project>

@@ -1,5 +1,6 @@
 using Scalar.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using CarAuctionApp.Domain.Extensions;
 using CarAuctionApp.Persistence.Extensions;
 using CarAuctionApp.WebApi.Extensions;
 using CarAuctionApp.WebApi.Endpoints;
@@ -13,6 +14,7 @@ builder.Services.AddCors();
 
 string connectionString = builder.Configuration.GetConnectionString("Postgres")!;
 builder.Services.AddPersistence(connectionString);
+builder.Services.AddDomainServices();
 
 var app = builder.Build();
 

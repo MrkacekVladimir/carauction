@@ -1,8 +1,8 @@
 ﻿using Bogus;
+using NSubstitute;
 using CarAuctionApp.Domain.Users.Entities;
 using CarAuctionApp.Domain.Users.Repositories;
 using CarAuctionApp.Domain.Users.Services;
-using NSubstitute;
 
 namespace CarAuctionApp.Domain.UnitTests.Users;
 
