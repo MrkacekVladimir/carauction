@@ -5,7 +5,7 @@ public class BidAmount
     private BidAmount() { }
     public BidAmount(decimal value)
     {
-        if(Value <= 0)
+        if(value <= 0)
         {
             throw new ArgumentException("Bid amount must be greater than zero.");
         }
