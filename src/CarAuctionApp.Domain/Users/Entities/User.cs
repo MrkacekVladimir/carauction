@@ -1,6 +1,8 @@
+using CarAuctionApp.Domain.Users.DomainEvents;
+
 namespace CarAuctionApp.Domain.Users.Entities;
 
-public class User: EntityBase
+public class User: AggregateRoot
 {
     protected User()
     {
@@ -9,7 +11,10 @@ public class User: EntityBase
 
     public User(string username)
     {
+        Id = Guid.NewGuid();
         Username = username;
+
+        _domainEvents.Add(new UserCreated(Id, username));
     }
 
     public Guid Id { get; private set; }

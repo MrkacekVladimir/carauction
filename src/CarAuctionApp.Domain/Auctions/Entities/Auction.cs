@@ -15,6 +15,8 @@ public class Auction: AggregateRoot
     {
         Id = Guid.NewGuid();
         Title = title;
+
+        _domainEvents.Add(new AuctionCreatedEvent(Id, title));
     }
 
     public Guid Id { get; private set; }
