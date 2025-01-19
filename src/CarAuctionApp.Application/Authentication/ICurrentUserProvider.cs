@@ -1,6 +1,8 @@
-﻿namespace CarAuctionApp.Application.Authentication;
+﻿using CarAuctionApp.Domain.Users.Entities;
+
+namespace CarAuctionApp.Application.Authentication;
 
 public interface ICurrentUserProvider
 {
-    public async Task<User?> GetCurrentUserAsync();
+    public Task<User?> GetCurrentUserAsync();
 }

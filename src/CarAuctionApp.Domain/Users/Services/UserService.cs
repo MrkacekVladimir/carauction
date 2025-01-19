@@ -21,7 +21,7 @@ public class UserService
 
         var user = new User(username);
 
-        _userRepository.AddAsync(user);
+        await _userRepository.AddAsync(user);
 
         return user;
     }

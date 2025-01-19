@@ -46,7 +46,7 @@
 
     record AuctionDto(Guid Id, string Title);
 
-    private List<AuctionDto> auctions;
+    private List<AuctionDto> auctions = new List<AuctionDto>();
     private bool isLoading = true;
     private bool isError = false;
 
@@ -55,7 +55,7 @@
         try
         {
             HttpClient Http = HttpClientFactory.CreateClient("CarAuctionApp.WebApi");
-            auctions = await Http.GetFromJsonAsync<List<AuctionDto>>("/auctions");
+            auctions = await Http.GetFromJsonAsync<List<AuctionDto>>("/auctions") ?? new List<AuctionDto>();
         }
         catch (Exception)
         {
