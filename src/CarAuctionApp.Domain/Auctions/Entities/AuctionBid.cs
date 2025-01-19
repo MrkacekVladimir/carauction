@@ -3,12 +3,9 @@ using CarAuctionApp.Domain.Users.Entities;
 
 namespace CarAuctionApp.Domain.Auctions.Entities;
 
-public class AuctionBid
+public class AuctionBid: EntityBase    
 {
-    protected AuctionBid()
-    {
-
-    }
+    protected AuctionBid() { }
 
     public AuctionBid(Auction auction, User user, BidAmount amount)
     {

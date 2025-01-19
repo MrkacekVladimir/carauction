@@ -1,6 +1,6 @@
 namespace CarAuctionApp.Domain.Users.Entities;
 
-public class User
+public class User: EntityBase
 {
     protected User()
     {

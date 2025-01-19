@@ -1,7 +1,5 @@
 ﻿namespace CarAuctionApp.Domain;
-
-public interface IDomainEvent;
-public class AggregateRoot
+public abstract class AggregateRoot: EntityBase
 {
     protected List<IDomainEvent> _domainEvents = new List<IDomainEvent>();
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();

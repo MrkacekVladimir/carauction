@@ -4,9 +4,9 @@ using CarAuctionApp.Domain.Auctions.Entities;
 
 namespace CarAuctionApp.Persistence.Configurations;
 
-internal sealed class AuctionTypeConfiguration : IEntityTypeConfiguration<Auction>
+internal sealed class AuctionTypeConfiguration : AggregateRootTypeConfiguration<Auction>
 {
-    public void Configure(EntityTypeBuilder<Auction> builder)
+    public override void Configure(EntityTypeBuilder<Auction> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)

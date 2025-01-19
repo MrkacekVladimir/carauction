@@ -1,6 +1,6 @@
 ﻿namespace CarAuctionApp.Domain.Auctions.ValueObjects;
 
-public class BidAmount
+public record BidAmount
 {
     private BidAmount() { }
     public BidAmount(decimal value)

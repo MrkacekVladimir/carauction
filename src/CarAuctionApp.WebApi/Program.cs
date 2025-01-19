@@ -11,7 +11,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
 builder.Services.AddCors();
 
-string connectionString = builder.Configuration.GetConnectionString("carauctionapp-postgres")!;
+string connectionString = builder.Configuration.GetConnectionString("Postgres")!;
 builder.Services.AddPersistence(connectionString);
 
 var app = builder.Build();

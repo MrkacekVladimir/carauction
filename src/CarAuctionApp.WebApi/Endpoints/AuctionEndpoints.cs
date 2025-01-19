@@ -6,12 +6,15 @@ using CarAuctionApp.Persistence;
 using CarAuctionApp.WebApi.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace CarAuctionApp.WebApi.Endpoints;
 
-record CreateAuctionModel(string Title);
-record CreateBidModel(decimal Amount);
+internal record CreateAuctionModel(string Title);
+internal record CreateBidModel(decimal Amount);
+
+internal record AuctionBidUserDto(Guid Id, string Username);
+internal record AuctionBidDto(Guid Id, decimal Amount, AuctionBidUserDto User);
+internal record AuctionListItemDto(Guid Id, string Title, IEnumerable<AuctionBidDto> bids);
 
 internal static class AuctionEndpoints
 {
@@ -21,8 +24,19 @@ internal static class AuctionEndpoints
 
         auctionsGroup.MapGet("/", async (AuctionDbContext dbContext) =>
         {
-            var auctions = await dbContext.Auctions.ToListAsync();
+            var auctions = await dbContext.Auctions.AsNoTracking()
+            .Select(a => 
+            new AuctionListItemDto(
+                a.Id,
+                a.Title,
+                a.Bids.Select(b => new AuctionBidDto(
+                    b.Id,
+                    b.Amount.Value,
+                    new AuctionBidUserDto(b.User.Id, b.User.Username)) 
+                ) 
+            )).ToListAsync();
             return Results.Json(auctions);
+
         }).WithName("GetAuctions");
 
         auctionsGroup.MapPost("/", async (CreateAuctionModel model, AuctionDbContext dbContext) =>
