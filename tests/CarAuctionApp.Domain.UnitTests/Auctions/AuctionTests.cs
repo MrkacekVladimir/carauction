@@ -11,15 +11,17 @@ public class AuctionTests
     public void AddBid_ShouldPass()
     {
         // Arrange
-        Auction auction = new Auction("Test auction");
+        AuctionDate auctionDate = new AuctionDate(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
+        Auction auction = new Auction("Test auction", auctionDate);
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
 
         // Act
-        AuctionBid bid = auction.AddBid(user, amount);
+        auction.AddBid(user, amount);
         
         // Assert
         Assert.Single(auction.Bids);
+        var bid = auction.Bids.ToList()[0];
         Assert.Equal(user, bid.User);
         Assert.Equal(amount, bid.Amount);
     }
@@ -29,9 +31,10 @@ public class AuctionTests
     {
         // Arrange
         string title = "Test auction";
+        AuctionDate auctionDate = new AuctionDate(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
 
         // Act
-        Auction auction = new Auction(title);
+        Auction auction = new Auction(title, auctionDate);
         var events = auction.DomainEvents.ToList();
 
         // Assert
@@ -45,7 +48,8 @@ public class AuctionTests
     public void AddBid_ShouldThrow_WhenAmountIsLowerThanCurrentMaxBid()
     {
         // Arrange
-        Auction auction = new Auction("Test auction");
+        AuctionDate auctionDate = new AuctionDate(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
+        Auction auction = new Auction("Test auction", auctionDate);
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
         auction.AddBid(user, amount);
@@ -58,7 +62,8 @@ public class AuctionTests
     public void AddBid_ShouldThrow_WhenAmountIsEqualToCurrentMaxBid()
     {
         // Arrange
-        Auction auction = new Auction("Test auction");
+        AuctionDate auctionDate = new AuctionDate(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
+        Auction auction = new Auction("Test auction", auctionDate);
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
         auction.AddBid(user, amount);

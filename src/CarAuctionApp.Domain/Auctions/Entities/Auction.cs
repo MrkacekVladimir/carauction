@@ -11,21 +11,23 @@ public class Auction: AggregateRoot
         Title = null!;
     }
 
-    public Auction(string title)
+    public Auction(string title, AuctionDate auctionDate)
     {
         Id = Guid.NewGuid();
         Title = title;
+        Date = auctionDate;
 
         _domainEvents.Add(new AuctionCreatedEvent(Id, title));
     }
 
     public Guid Id { get; private set; }
     public string Title { get; private set; }
+    public AuctionDate Date { get; private set; }
 
     private List<AuctionBid> _bids = new List<AuctionBid>();
     public IReadOnlyCollection<AuctionBid> Bids => _bids.AsReadOnly();
 
-    public AuctionBid AddBid(User user, BidAmount amount)
+    public void AddBid(User user, BidAmount amount)
     {
         AuctionBid? maxBid = Bids.MaxBy(b => b.Amount.Value);
         if (maxBid is not null && maxBid.Amount.Value >= amount.Value)
@@ -34,11 +36,15 @@ public class Auction: AggregateRoot
             throw new Exception($"Cannot create a bid with the same or lower amount. Current: {maxBid.Amount}, provided: {amount}.");
         }
 
-        AuctionBid bid = new AuctionBid(this, user, amount);
-        _bids.Add(bid);
-
+        Date.UpdateLastBidOn(DateTime.UtcNow);
+        _bids.Add(new AuctionBid(this, user, amount));
         _domainEvents.Add(new AuctionBidCreatedEvent(Id, amount.Value));
 
-        return bid;
+        TimeSpan timeLeft = Date.EndsOn - Date.LastBidOn.Value;
+        if(timeLeft.TotalSeconds < 60)
+        {
+            Date.ExtendEndsOn(TimeSpan.FromMinutes(1));
+            _domainEvents.Add(new AuctionEndsOnExtendedEvent(Id, Date.EndsOn));
+        }
     }
 }

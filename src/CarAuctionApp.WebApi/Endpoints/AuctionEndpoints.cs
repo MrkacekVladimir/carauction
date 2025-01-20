@@ -6,10 +6,12 @@ using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Auctions.ValueObjects;
 using CarAuctionApp.Persistence;
 using CarAuctionApp.WebApi.Hubs;
+using CarAuctionApp.Domain.Auctions.Services;
+using CarAuctionApp.Application.Authentication;
 
 namespace CarAuctionApp.WebApi.Endpoints;
 
-public record CreateAuctionModel(string Title);
+public record CreateAuctionModel(string Title, DateTime StartsOn, DateTime EndsOn);
 public record CreateBidModel(decimal Amount);
 
 public record AuctionBidUserDto(Guid Id, string Username);
@@ -39,13 +41,10 @@ internal static class AuctionEndpoints
 
         }).WithName("GetAuctions");
 
-        auctionsGroup.MapPost("/", async (CreateAuctionModel model, AuctionDbContext dbContext) =>
+        auctionsGroup.MapPost("/", async (CreateAuctionModel model, IUnitOfWork unitOfWork, IAuctionService auctionService, CancellationToken cancellationToken) =>
         {
-            Auction auction = new Auction(model.Title);
-
-            dbContext.Auctions.Add(auction);
-            await dbContext.SaveChangesAsync();
-
+            var auction = await auctionService.CreateAuctionAsync(model.Title, model.StartsOn, model.EndsOn);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return Results.Json(auction);
         }).WithName("CreateAuction");
 
@@ -64,14 +63,18 @@ internal static class AuctionEndpoints
         auctionsGroup.MapPost("/{auctionId:Guid}/bids", async (
             Guid auctionId,
             CreateBidModel model,
+            ICurrentUserProvider currentUserProvider,
             IAuctionRepository auctionRepository,
             IUnitOfWork unitOfWork,
             IHubContext<AuctionHub, IAuctionHubClient> hubContext,
-            AuctionDbContext dbContext
+            CancellationToken cancellationToken
             ) =>
         {
-            //TODO: remove fake user 
-            var user = await dbContext.Users.FirstAsync();
+            var user = await currentUserProvider.GetCurrentUserAsync();
+            if (user is null)
+            {
+                return Results.Unauthorized();
+            }
 
             var auction = await auctionRepository.GetById(auctionId);
             if (auction is null)
@@ -82,7 +85,7 @@ internal static class AuctionEndpoints
             BidAmount amount = new(model.Amount);
             auction.AddBid(user, amount);
 
-            await unitOfWork.SaveChangesAsync();
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             await hubContext.Clients.Group(auctionId.ToString()).ReceiveBidUpdate(auctionId, model.Amount);
 

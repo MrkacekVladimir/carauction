@@ -1,9 +1,14 @@
 ﻿using CarAuctionApp.Domain.Auctions.Entities;
 using CarAuctionApp.Domain.Auctions.Repositories;
+using CarAuctionApp.Domain.Auctions.ValueObjects;
 
 namespace CarAuctionApp.Domain.Auctions.Services;
 
-public class AuctionService
+public interface IAuctionService
+{
+    Task<Auction> CreateAuctionAsync(string title, DateTime startsOn, DateTime endsOn);
+}   
+public class AuctionService: IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
 
@@ -12,11 +17,12 @@ public class AuctionService
         this._auctionRepository = auctionRepository;
     }
 
-    public Task<Auction> CreateAuctionAsync(string title)
+    public Task<Auction> CreateAuctionAsync(string title, DateTime startsOn, DateTime endsOn)
     {
-        var auction = new Auction(title);
+        var auctionDate = new AuctionDate(startsOn, endsOn);
+        var auction = new Auction(title, auctionDate);
 
-        _auctionRepository.Add(auction);
+        _auctionRepository.AddAsync(auction);
 
         return Task.FromResult(auction);
     }

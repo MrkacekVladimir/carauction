@@ -18,6 +18,7 @@ namespace CarAuctionApp.WebApi.Services
 
         public async Task<User?> GetCurrentUserAsync()
         {
+            /*
             var principal = _httpContextAccessor.HttpContext?.User;
             if(principal == null)
             {
@@ -31,6 +32,10 @@ namespace CarAuctionApp.WebApi.Services
             }
 
             var user = await _userRepository.GetById(Guid.Parse(id));
+            */
+
+            //TODO: Remove fake user
+            var user = await _userRepository.GetById(Guid.NewGuid());
 
             return user;
         }

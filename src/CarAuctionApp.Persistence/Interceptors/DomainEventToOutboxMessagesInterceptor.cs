@@ -7,12 +7,12 @@ namespace CarAuctionApp.Persistence.Interceptors
 {
     public class DomainEventToOutboxMessagesInterceptor : SaveChangesInterceptor
     {
-        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+        public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
             AuctionDbContext? dbContext = (AuctionDbContext?)eventData.Context;
             if(dbContext is null)
             {
-                return base.SavingChanges(eventData, result);
+                return await base.SavingChangesAsync(eventData, result, cancellationToken);
             }
 
             List<OutboxMessage> outboxMessages = dbContext.ChangeTracker
@@ -26,16 +26,20 @@ namespace CarAuctionApp.Persistence.Interceptors
 
                     return domainEvents;
                 })
-                .Select(domainEvent => new OutboxMessage(
-                    domainEvent.GetType().Name,
-                    JsonSerializer.Serialize(domainEvent)
-                    )
-                )
+                .Select(MapToOutboxMessage)
                 .ToList();
 
-            dbContext.OutboxMessages.AddRange(outboxMessages);
+            await dbContext.Set<OutboxMessage>().AddRangeAsync(outboxMessages);
 
-            return base.SavingChanges(eventData, result);
+            return await base.SavingChangesAsync(eventData, result, cancellationToken);
+        }
+
+        private OutboxMessage MapToOutboxMessage(IDomainEvent domainEvent)
+        {
+            return new OutboxMessage(
+                domainEvent.GetType().Name,
+                JsonSerializer.Serialize(domainEvent)
+            );
         }
     }
 }

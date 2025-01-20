@@ -15,11 +15,13 @@ public static class PersistenceExtensions
     {
         services.AddScoped<IAuctionRepository, AuctionRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUnitOfWork, AuctionDbContext>();
+        services.AddScoped<IUnitOfWork>((sp) => sp.GetRequiredService<AuctionDbContext>());
+        services.AddSingleton<DomainEventToOutboxMessagesInterceptor>();
 
-        services.AddDbContextPool<AuctionDbContext>((sp, options) =>
+        services.AddDbContext<AuctionDbContext>((sp, options) =>
         {
-            options.AddInterceptors(new DomainEventToOutboxMessagesInterceptor());
+            var outboxInterceptor = sp.GetRequiredService<DomainEventToOutboxMessagesInterceptor>();
+            options.AddInterceptors(outboxInterceptor);
             options.UseNpgsql(connectionString);
         });
     }

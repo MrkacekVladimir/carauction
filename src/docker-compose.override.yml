@@ -1,14 +1,16 @@
 services:
 
-  carauctionapp.webapi:
-    container_name: carauctionapp.webapi
+  carauctionapp-webapi:
+    container_name: carauctionapp-webapi
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:5001;http://+:5000
       - ASPNETCORE_Kestrel__Certificates__Default__Password=dev123
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     depends_on:
-      carauctionapp.postgres:
+      carauctionapp-postgres:
+        condition: service_started
+      carauctionapp-rabbitmq:
         condition: service_started
     ports:
       - "5000:5000"
@@ -18,26 +20,8 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ~/.aspnet/https:/https:ro
 
-  carauctionapp.webblazor:
-    container_name: carauctionapp.webblazor
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:5011;http://+:5010
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=dev123
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-    depends_on:
-      carauctionapp.webapi:
-        condition: service_started
-    ports:
-      - "5010:5010"
-      - "5011:5011"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ~/.aspnet/https:/https:ro
-
-  carauctionapp.postgres:
-    container_name: carauctionapp.postgres
+  carauctionapp-postgres:
+    container_name: carauctionapp-postgres
     environment:
       POSTGRES_USER: auctionadmin
       POSTGRES_PASSWORD: auctionadmin
@@ -46,4 +30,17 @@ services:
       - "5432:5432"
     volumes:
       - ./.containers/postgres:/var/lib/postgresql/data
+
+  carauctionapp-rabbitmq:
+    container_name: carauctionapp-rabbitmq
+    hostname: carauctionapp-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+     - "15672:15672"
+     - "5672:5672"
+    volumes:
+     - ./.containers/rabbitmq/data:/var/lib/rabbitmq
+     - ./.containers/rabbitmq/log:/var/log/rabbitmq
 

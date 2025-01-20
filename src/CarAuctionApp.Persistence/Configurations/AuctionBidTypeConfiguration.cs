@@ -8,10 +8,12 @@ internal sealed class AuctionBidTypeConfiguration : EntityBaseTypeConfiguration<
 {
     public override void Configure(EntityTypeBuilder<AuctionBid> builder)
     {
+        builder.ToTable("AuctionBids");
+
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
-          .IsRequired()
-          .ValueGeneratedOnAdd();
+          .ValueGeneratedNever()
+          .IsRequired();
 
         builder.OwnsOne(x => x.Amount, y =>
         {
