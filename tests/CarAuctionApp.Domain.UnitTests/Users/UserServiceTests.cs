@@ -25,9 +25,11 @@ public class UserServiceTests
         _userRepository.IsUsernameAvailableAsync(fakeUsername).Returns(true);
 
         //Act
-        var user = await _userService.CreateUserAsync(fakeUsername);
+        var userResult = await _userService.CreateUserAsync(fakeUsername);
 
         //Assert
+        Assert.True(userResult.IsSuccess);
+        var user = userResult.Value!;
         Assert.Equal(fakeUsername, user.Username);
         await _userRepository.Received().IsUsernameAvailableAsync(fakeUsername);
         await _userRepository.Received().AddAsync(user);
@@ -41,8 +43,11 @@ public class UserServiceTests
         string fakeUsername = faker.Internet.UserName();
         _userRepository.IsUsernameAvailableAsync(fakeUsername).Returns(false);
 
-        //Act/Assert
-        await Assert.ThrowsAsync<Exception>(() => _userService.CreateUserAsync(fakeUsername));
+        //Act
+        var userResult = await _userService.CreateUserAsync(fakeUsername);
+
+        //Assert
+        Assert.False(userResult.IsSuccess);
         await _userRepository.Received().IsUsernameAvailableAsync(fakeUsername);
         await _userRepository.DidNotReceive().AddAsync(Arg.Any<User>());
     }

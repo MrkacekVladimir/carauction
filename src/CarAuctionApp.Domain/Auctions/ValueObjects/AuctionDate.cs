@@ -1,16 +1,25 @@
-﻿namespace CarAuctionApp.Domain.Auctions.ValueObjects;
+﻿using CarAuctionApp.Domain.Shared;
+
+namespace CarAuctionApp.Domain.Auctions.ValueObjects;
 
 public record AuctionDate
 {
-    public AuctionDate(DateTime startsOn, DateTime endsOn)
+    private AuctionDate() { }
+    private AuctionDate(DateTime startsOn, DateTime endsOn)
+    {
+        StartsOn = startsOn;
+        EndsOn = endsOn;
+    }
+
+    public static Result<AuctionDate?> Create(DateTime startsOn, DateTime endsOn)
     {
         if (endsOn < startsOn)
         {
-            throw new Exception("End date cannot be earlier than start date.");
+            return Result<AuctionDate?>.Failure(new Error("AuctionDateCreate", "End date cannot be earlier than start date."));
         }
 
-        StartsOn = startsOn;
-        EndsOn = endsOn;
+        AuctionDate date = new(startsOn, endsOn);
+        return Result<AuctionDate?>.Success(date);
     }
 
     public DateTime StartsOn { get; private set; }
@@ -19,18 +28,20 @@ public record AuctionDate
     public bool HasEnded => DateTime.UtcNow > EndsOn;
     public bool IsRunning => DateTime.UtcNow >= StartsOn && DateTime.UtcNow <= EndsOn;
 
-    public void ExtendEndsOn(TimeSpan time)
+    public Result ExtendEndsOn(TimeSpan time)
     {
         EndsOn.Add(time);
+        return Result.Success();
     }
 
-    public void UpdateLastBidOn(DateTime lastBidOn)
+    public Result UpdateLastBidOn(DateTime lastBidOn)
     {
         if (lastBidOn >= EndsOn || lastBidOn <= StartsOn)
         {
-            throw new Exception("End date cannot be earlier than start date or in the future.");
+            return Result.Failure(new Error("AuctionDateUpdateLastBidOn", "End date cannot be earlier than start date or in the future."));
         }
 
         LastBidOn = lastBidOn;
+        return Result.Success();
     }
 }

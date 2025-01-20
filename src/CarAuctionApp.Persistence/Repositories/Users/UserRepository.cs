@@ -1,4 +1,5 @@
-﻿using CarAuctionApp.Domain.Users.Entities;
+﻿using CarAuctionApp.Domain.Shared;
+using CarAuctionApp.Domain.Users.Entities;
 using CarAuctionApp.Domain.Users.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +13,10 @@ public class UserRepository : IUserRepository
     {
         this._dbContext = dbContext;
     }
-    public Task AddAsync(User user)
+    public Task<Result<User>> AddAsync(User user)
     {
         _dbContext.Users.Add(user);
-        return Task.CompletedTask;
+        return Task.FromResult(Result<User>.Success(user));
     }
 
     public async Task<User?> GetById(Guid id)

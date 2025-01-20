@@ -14,7 +14,7 @@ public class User: AggregateRoot
         Id = Guid.NewGuid();
         Username = username;
 
-        _domainEvents.Add(new UserCreated(Id, username));
+        _domainEvents.Add(new UserCreatedEvent(Id, username));
     }
 
     public Guid Id { get; private set; }

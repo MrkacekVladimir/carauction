@@ -11,7 +11,7 @@ public class AuctionTests
     public void AddBid_ShouldPass()
     {
         // Arrange
-        AuctionDate auctionDate = new AuctionDate(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
+        AuctionDate auctionDate = AuctionDate.Create(DateTime.UtcNow, DateTime.UtcNow.AddDays(2)).Value!;
         Auction auction = new Auction("Test auction", auctionDate);
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
@@ -31,7 +31,7 @@ public class AuctionTests
     {
         // Arrange
         string title = "Test auction";
-        AuctionDate auctionDate = new AuctionDate(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
+        AuctionDate auctionDate = AuctionDate.Create(DateTime.UtcNow, DateTime.UtcNow.AddDays(2)).Value!;
 
         // Act
         Auction auction = new Auction(title, auctionDate);
@@ -48,28 +48,36 @@ public class AuctionTests
     public void AddBid_ShouldThrow_WhenAmountIsLowerThanCurrentMaxBid()
     {
         // Arrange
-        AuctionDate auctionDate = new AuctionDate(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
+        AuctionDate auctionDate = AuctionDate.Create(DateTime.UtcNow, DateTime.UtcNow.AddDays(2)).Value!;
         Auction auction = new Auction("Test auction", auctionDate);
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
         auction.AddBid(user, amount);
 
-        // Act/Assert
-        Assert.Throws<Exception>(() => auction.AddBid(user, new BidAmount(500)));
+        // Act
+        var result = auction.AddBid(user, new BidAmount(500));
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.Value);
     }
 
     [Fact]
     public void AddBid_ShouldThrow_WhenAmountIsEqualToCurrentMaxBid()
     {
         // Arrange
-        AuctionDate auctionDate = new AuctionDate(DateTime.UtcNow, DateTime.UtcNow.AddDays(2));
+        AuctionDate auctionDate = AuctionDate.Create(DateTime.UtcNow, DateTime.UtcNow.AddDays(2)).Value!;
         Auction auction = new Auction("Test auction", auctionDate);
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
         auction.AddBid(user, amount);
 
-        // Act/Assert
-        Assert.Throws<Exception>(() => auction.AddBid(user, amount));
+        // Act
+        var result = auction.AddBid(user, amount);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.Value);
     }
 
 }

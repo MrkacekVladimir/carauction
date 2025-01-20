@@ -1,4 +1,5 @@
-﻿using CarAuctionApp.Domain.Users.Entities;
+﻿using CarAuctionApp.Domain.Shared;
+using CarAuctionApp.Domain.Users.Entities;
 using CarAuctionApp.Domain.Users.Repositories;
 
 namespace CarAuctionApp.Domain.Users.Services;
@@ -12,17 +13,17 @@ public class UserService
         this._userRepository = userRepository;
     }
 
-    public async Task<User> CreateUserAsync(string username)
+    public async Task<Result<User?>> CreateUserAsync(string username)
     {
         if(!await _userRepository.IsUsernameAvailableAsync(username))
         {
-            throw new Exception("Username is not available");
+            return Result<User?>.Failure(new Error("USER001", "Username is already taken"));
         }
 
         var user = new User(username);
 
         await _userRepository.AddAsync(user);
 
-        return user;
+        return Result<User?>.Success(user);
     }
 }
