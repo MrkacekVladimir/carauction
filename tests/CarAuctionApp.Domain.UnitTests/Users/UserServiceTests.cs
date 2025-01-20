@@ -42,7 +42,7 @@ public class UserServiceTests
         _userRepository.IsUsernameAvailableAsync(fakeUsername).Returns(false);
 
         //Act/Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => _userService.CreateUserAsync(fakeUsername));
+        await Assert.ThrowsAsync<Exception>(() => _userService.CreateUserAsync(fakeUsername));
         await _userRepository.Received().IsUsernameAvailableAsync(fakeUsername);
         await _userRepository.DidNotReceive().AddAsync(Arg.Any<User>());
     }
