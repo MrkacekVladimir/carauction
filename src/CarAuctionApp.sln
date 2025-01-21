@@ -23,6 +23,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.SharedKernel", "CarAuctionApp.SharedKernel\CarAuctionApp.SharedKernel.csproj", "{6729571A-31E4-4949-B659-F79B2AEC7568}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.Persistence.UnitTests", "..\tests\CarAuctionApp.Persistence.UnitTests\CarAuctionApp.Persistence.UnitTests.csproj", "{6C4BDB1B-50E6-4F65-B2F4-5B68ED608B17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{6729571A-31E4-4949-B659-F79B2AEC7568}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6729571A-31E4-4949-B659-F79B2AEC7568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6729571A-31E4-4949-B659-F79B2AEC7568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C4BDB1B-50E6-4F65-B2F4-5B68ED608B17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C4BDB1B-50E6-4F65-B2F4-5B68ED608B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C4BDB1B-50E6-4F65-B2F4-5B68ED608B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C4BDB1B-50E6-4F65-B2F4-5B68ED608B17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,5 +79,6 @@ Global
 		{67B07549-DB02-45FA-B29F-FE878AE63F5F} = {BBF80152-27B8-47FA-BB0E-8A611033214C}
 		{DF29EE6D-D73F-4F0F-B438-E0CE00E1265B} = {C466BC97-8BE1-4F4B-B8A8-A368CA2D1876}
 		{6729571A-31E4-4949-B659-F79B2AEC7568} = {BBF80152-27B8-47FA-BB0E-8A611033214C}
+		{6C4BDB1B-50E6-4F65-B2F4-5B68ED608B17} = {C466BC97-8BE1-4F4B-B8A8-A368CA2D1876}
 	EndGlobalSection
 EndGlobal

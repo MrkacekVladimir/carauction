@@ -8,6 +8,7 @@ using CarAuctionApp.WebApi.Hubs;
 using CarAuctionApp.Infrastructure.MessageBroker;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using CarAuctionApp.WebApi.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,6 @@ builder.Services.AddDomainServices();
 builder.Services.AddApiServices();
 
 builder.Services.Configure<MessageBrokerSettings>(builder.Configuration.GetSection("MessageBroker"));
-
 builder.Services.AddMassTransit(busConfigurator =>
 {
     busConfigurator.SetKebabCaseEndpointNameFormatter();
@@ -47,6 +47,8 @@ builder.Services.AddMassTransit(busConfigurator =>
         });
     });
 });
+builder.Services.AddScoped<OutboxMessageProcessor>();
+builder.Services.AddHostedService<OutboxMessagesBackgroundService>();
 
 var app = builder.Build();
 

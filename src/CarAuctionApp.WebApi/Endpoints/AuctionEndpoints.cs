@@ -1,17 +1,16 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using CarAuctionApp.SharedKernel;
-using CarAuctionApp.Domain.Auctions.Entities;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Auctions.ValueObjects;
 using CarAuctionApp.Persistence;
 using CarAuctionApp.WebApi.Hubs;
 using CarAuctionApp.Domain.Auctions.Services;
 using CarAuctionApp.Application.Authentication;
-using MassTransit.Util.Scanning;
 
 namespace CarAuctionApp.WebApi.Endpoints;
 
+//TODO: Move records to separate files
 public record CreateAuctionModel(string Title, DateTime StartsOn, DateTime EndsOn);
 public record CreateBidModel(decimal Amount);
 

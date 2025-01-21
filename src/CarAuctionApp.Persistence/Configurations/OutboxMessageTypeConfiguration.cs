@@ -20,7 +20,7 @@ internal sealed class OutboxMessageTypeConfiguration: IEntityTypeConfiguration<O
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(x => x.Data)
+        builder.Property(x => x.Payload)
             .IsRequired();
 
         builder.Property(x => x.CreatedOn)

@@ -2,6 +2,7 @@
 using CarAuctionApp.SharedKernel;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace CarAuctionApp.Persistence.Interceptors
 {
@@ -26,7 +27,7 @@ namespace CarAuctionApp.Persistence.Interceptors
 
                     return domainEvents;
                 })
-                .Select(MapToOutboxMessage)
+                .Select(OutboxMessage.MapToOutboxMessage)
                 .ToList();
 
             await dbContext.Set<OutboxMessage>().AddRangeAsync(outboxMessages);
@@ -34,12 +35,5 @@ namespace CarAuctionApp.Persistence.Interceptors
             return await base.SavingChangesAsync(eventData, result, cancellationToken);
         }
 
-        private OutboxMessage MapToOutboxMessage(IDomainEvent domainEvent)
-        {
-            return new OutboxMessage(
-                domainEvent.GetType().Name,
-                JsonSerializer.Serialize(domainEvent)
-            );
-        }
     }
 }

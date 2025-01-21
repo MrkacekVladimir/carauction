@@ -1,24 +1,43 @@
-﻿namespace CarAuctionApp.Persistence.Outbox;
+﻿using CarAuctionApp.SharedKernel;
+using System.Text.Json;
+
+namespace CarAuctionApp.Persistence.Outbox;
 
 public class OutboxMessage
 {
-    protected OutboxMessage()
+#pragma warning disable CS8618
+    // EF Core
+    private OutboxMessage()
     {
-        Type = null!;
-        Data = null!;
     }
+#pragma warning restore CS8618
 
-    public OutboxMessage(string type, string data)
+    public OutboxMessage(string type, string payload)
     {
         Id = Guid.NewGuid();
         Type = type;
-        Data = data;
+        Payload = payload;
         CreatedOn = DateTime.UtcNow;
     }
 
     public Guid Id { get; private set; }
     public string Type { get; private set; }
-    public string Data { get; private set; }
+    public string Payload { get; private set; }
+    public string? Error { get; private set; }
     public DateTime CreatedOn { get; private set; }
     public DateTime? ProcessedOn { get; private set; }
+
+    public static OutboxMessage MapToOutboxMessage(IDomainEvent domainEvent)
+    {
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = false,
+        };
+
+        var type = domainEvent.GetType();
+        return new OutboxMessage(
+            type.Name,
+            JsonSerializer.Serialize(domainEvent, type, options)
+        );
+    }
 }
