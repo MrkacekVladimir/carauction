@@ -4,8 +4,7 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "carauctionapp.webapi": "StartDebugging",
-        "carauctionapp.webblazor": "StartDebugging"
+        "carauctionapp-webapi": "StartDebugging"
       }
     }
   }
