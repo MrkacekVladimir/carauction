@@ -16,3 +16,6 @@ Car Auction App is a web application written mostly in .NET technologies with fo
 ### /tests/
 
 - CarAuctionApp.Domain.UnitTests = xUnit project covering unit tests for Domain processes
+- CarAuctionApp.Infrastructure.UnitTests = xUnit project covering unit tests for infrastructure communication
+- CarAuctionApp.Persistence.UnitTests = xUnit project covering unit tests for specific for persisting data
+- CarAuctionApp.TestUtilities = Shared library for all tests containing utility classes and helper methods
