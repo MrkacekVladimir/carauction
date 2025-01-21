@@ -8,6 +8,7 @@ using CarAuctionApp.Persistence;
 using CarAuctionApp.WebApi.Hubs;
 using CarAuctionApp.Domain.Auctions.Services;
 using CarAuctionApp.Application.Authentication;
+using MassTransit.Util.Scanning;
 
 namespace CarAuctionApp.WebApi.Endpoints;
 
@@ -24,7 +25,7 @@ internal static class AuctionEndpoints
     {
         var auctionsGroup = app.MapGroup("/auctions");
 
-        auctionsGroup.MapGet("/", async (AuctionDbContext dbContext) =>
+        auctionsGroup.MapGet("/", async (AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {
             var auctions = await dbContext.Auctions.AsNoTracking()
             .Select(a => 
@@ -36,31 +37,56 @@ internal static class AuctionEndpoints
                     b.Amount.Value,
                     new AuctionBidUserDto(b.User.Id, b.User.Username)) 
                 ) 
-            )).ToListAsync();
+            )).ToListAsync(cancellationToken);
+
             return Results.Json(auctions);
 
         }).WithName("GetAuctions");
-
         auctionsGroup.MapPost("/", async (CreateAuctionModel model, IUnitOfWork unitOfWork, IAuctionService auctionService, CancellationToken cancellationToken) =>
         {
             var auction = await auctionService.CreateAuctionAsync(model.Title, model.StartsOn, model.EndsOn);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return Results.Json(auction);
         }).WithName("CreateAuction");
-
-        auctionsGroup.MapGet("/{auctionId:Guid}", async (Guid auctionId, AuctionDbContext dbContext) =>
+        auctionsGroup.MapGet("/{auctionId:guid}", async (Guid auctionId, AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {
-            var auction = await dbContext.Auctions.FindAsync(auctionId);
+            var auctionDto = await dbContext.Auctions.AsNoTracking()
+                .Select(a => a) //TODO: Create DTO
+                .FirstOrDefaultAsync(a => a.Id == auctionId);
+            return Results.Json(auctionDto);
+        }).WithName("GetAuctionById");
+        auctionsGroup.MapPut("/{auctionId:guid}", async (Guid auctionId, CreateAuctionModel model, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
+        {
+            var auction = await auctionRepository.GetById(auctionId);
+            if(auction is null)
+            {
+                return Results.NotFound();
+            }
+
+            //TODO: Update auction
+
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return Results.Json(auction);
-        }).WithName("GetAuction");
-
-        auctionsGroup.MapGet("/{auctionId:Guid}/bids", async (Guid auctionId, AuctionDbContext dbContext) =>
+        }).WithName("UpdateAuctionById");
+        auctionsGroup.MapDelete("/{auctionId:guid}", async (Guid auctionId, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
         {
-            var bids = await dbContext.AuctionBids.Where(b => b.AuctionId == auctionId).ToListAsync();
+            var auction = await auctionRepository.GetById(auctionId);
+            if(auction is null)
+            {
+                return Results.NotFound();
+            }
+
+            await auctionRepository.RemoveAsync(auction);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Results.Ok();
+        }).WithName("DeleteAuction");
+        auctionsGroup.MapGet("/{auctionId:guid}/bids", async (Guid auctionId, AuctionDbContext dbContext, CancellationToken cancellationToken) =>
+        {
+            var bids = await dbContext.AuctionBids.Where(b => b.AuctionId == auctionId).ToListAsync(cancellationToken);
             return Results.Json(bids);
         }).WithName("GetAuctionBids");
-
-        auctionsGroup.MapPost("/{auctionId:Guid}/bids", async (
+        auctionsGroup.MapPost("/{auctionId:guid}/bids", async (
             Guid auctionId,
             CreateBidModel model,
             ICurrentUserProvider currentUserProvider,
@@ -89,11 +115,8 @@ internal static class AuctionEndpoints
 
             await hubContext.Clients.Group(auctionId.ToString()).ReceiveBidUpdate(auctionId, model.Amount);
 
-            //TODO: Return DTO to fix cyclic reference
-            return Results.Json(auction, new System.Text.Json.JsonSerializerOptions
-            {
-                ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
-            });
+            //TODO: Meaningful response, maybe CreatedAt route and also return DTO 
+            return Results.Ok();
         }).WithName("CreateAuctionBid");
 
     }
