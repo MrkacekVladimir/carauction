@@ -17,10 +17,10 @@ public class AuctionDbContext : DbContext, IUnitOfWork
     {
     }
 
-    public DbSet<Auction> Auctions { get; private set; } = null!;
-    public DbSet<AuctionBid> AuctionBids { get; private set; } = null!;
-    public DbSet<User> Users { get; private set; } = null!;
-    public DbSet<OutboxMessage> OutboxMessages { get; private set; } = null!;
+    public virtual DbSet<Auction> Auctions { get; private set; } = null!;
+    public virtual DbSet<AuctionBid> AuctionBids { get; private set; } = null!;
+    public virtual DbSet<User> Users { get; private set; } = null!;
+    public virtual DbSet<OutboxMessage> OutboxMessages { get; private set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -27,6 +27,12 @@ public class OutboxMessage
     public DateTime CreatedOn { get; private set; }
     public DateTime? ProcessedOn { get; private set; }
 
+    public void MarkAsProcessed(string? error = null)
+    {
+        Error = error;
+        ProcessedOn = DateTime.UtcNow;
+    }
+
     public static OutboxMessage MapToOutboxMessage(IDomainEvent domainEvent)
     {
         var options = new JsonSerializerOptions
@@ -36,7 +42,7 @@ public class OutboxMessage
 
         var type = domainEvent.GetType();
         return new OutboxMessage(
-            type.Name,
+            type.FullName!,
             JsonSerializer.Serialize(domainEvent, type, options)
         );
     }

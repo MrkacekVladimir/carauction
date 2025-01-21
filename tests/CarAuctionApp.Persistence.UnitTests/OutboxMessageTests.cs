@@ -19,7 +19,7 @@ namespace CarAuctionApp.Persistence.UnitTests
             OutboxMessage message = OutboxMessage.MapToOutboxMessage(domainEvent);
 
             //Assert
-            Assert.Equal(nameof(CustomTestEvent), message.Type);
+            Assert.Equal(domainEvent.GetType().FullName, message.Type);
             Assert.Equal(string.Format("{{\"Id\":\"{0}\",\"Username\":\"{1}\"}}", id.ToString(), username), message.Payload);
         }
     }

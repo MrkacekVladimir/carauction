@@ -1,5 +1,6 @@
 ﻿using CarAuctionApp.Domain;
 using CarAuctionApp.Persistence;
+using CarAuctionApp.Persistence.Outbox;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
@@ -8,7 +9,6 @@ using System.Text.Json;
 namespace CarAuctionApp.Infrastructure.MessageBroker;
 
 internal record OutboxMessageUpdate(Guid Id, string? Error);
-internal record OutboxMessageMeta(Guid Id, string Type, string Payload);
 
 public sealed class OutboxMessageProcessor
 {
@@ -30,48 +30,39 @@ public sealed class OutboxMessageProcessor
         using var transaction = _dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         var outboxMessages = await _dbContext.OutboxMessages
-            .AsNoTracking()
             .Where(m => m.ProcessedOn == null)
             .OrderBy(m => m.CreatedOn)
             .Take(BatchSize)
-            .Select(m => new OutboxMessageMeta(m.Id, m.Type, m.Payload))
             .ToListAsync(cancellationToken);
         if(outboxMessages.Count == 0)
         {
             return;
         }
 
-        ConcurrentQueue<OutboxMessageUpdate> updates = new ConcurrentQueue<OutboxMessageUpdate>();
-
         var tasks = outboxMessages
-            .Select(outboxMessages => PublishMessage(updates, outboxMessages, cancellationToken))
+            .Select(outboxMessages => PublishMessage(outboxMessages, cancellationToken))
             .ToList();
 
         await Task.WhenAll(tasks);
 
-        var ids = updates.Select(m => m.Id).ToList();
-        await _dbContext.OutboxMessages
-            .Where(m => ids.Contains(m.Id))
-            .ExecuteUpdateAsync(updates => 
-                updates.SetProperty(m => m.ProcessedOn, _ => DateTime.UtcNow)
-            , cancellationToken);
-
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task PublishMessage(ConcurrentQueue<OutboxMessageUpdate> updates, OutboxMessageMeta outboxMessage, CancellationToken cancellationToken)
+    private async Task PublishMessage(OutboxMessage outboxMessage, CancellationToken cancellationToken)
     {
+        string? error = null;
         try
         {
             var type = GetOrAddType(outboxMessage.Type);
-            var message = JsonSerializer.Deserialize(outboxMessage.Payload, type);
-            await _publishEndpoint.Publish(outboxMessage.Payload, cancellationToken);
-            updates.Enqueue(new OutboxMessageUpdate(outboxMessage.Id, null));
+            var @event = JsonSerializer.Deserialize(outboxMessage.Payload, type)!;
+            await _publishEndpoint.Publish(@event, cancellationToken);
         }
         catch (Exception ex)
         {
-            updates.Enqueue(new OutboxMessageUpdate(outboxMessage.Id, ex.Message));
+            error = ex.Message;
         }
+
+        outboxMessage.MarkAsProcessed(error);
     }
 
     private Type GetOrAddType(string messageType)
@@ -81,7 +72,7 @@ public sealed class OutboxMessageProcessor
             return resolvedType;
         }
 
-        var type = DomainAssemblyReference.Assembly.GetType(messageType)!;
+        Type type = DomainAssemblyReference.Assembly.GetType(messageType)!;
         CachedResolvedTypes.Add(messageType, type);
         return type;
     }
