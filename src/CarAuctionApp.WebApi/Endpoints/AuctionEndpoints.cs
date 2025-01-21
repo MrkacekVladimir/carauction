@@ -108,10 +108,16 @@ internal static class AuctionEndpoints
             }
 
             BidAmount amount = new(model.Amount);
-            auction.AddBid(user, amount);
+            var result = auction.AddBid(user, amount);
+            if(!result.IsSuccess)
+            {
+                return Results.BadRequest(result.Error);
+            }
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
+            //TODO: Move sending price update to seperate service, because now we only send update to connected users to this application
+            //This will cause issues when we have multiple instances of this application
             await hubContext.Clients.Group(auctionId.ToString()).ReceiveBidUpdate(auctionId, model.Amount);
 
             //TODO: Meaningful response, maybe CreatedAt route and also return DTO 

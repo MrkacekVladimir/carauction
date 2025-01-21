@@ -39,7 +39,7 @@ export function App() {
     const callback = (increase: number) => {
       if (ref) {
         width += increase;
-        ref.style.width = `${width}px`;
+        //ref.style.width = `${width}px`;
       }
     };
 

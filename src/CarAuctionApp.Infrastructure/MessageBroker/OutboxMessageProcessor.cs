@@ -3,7 +3,6 @@ using CarAuctionApp.Persistence;
 using CarAuctionApp.Persistence.Outbox;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace CarAuctionApp.Infrastructure.MessageBroker;
