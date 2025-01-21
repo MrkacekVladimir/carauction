@@ -1,4 +1,4 @@
-﻿using CarAuctionApp.Domain.Shared;
+﻿using CarAuctionApp.SharedKernel;
 using CarAuctionApp.Domain.Users.Entities;
 using CarAuctionApp.Domain.Users.Repositories;
 

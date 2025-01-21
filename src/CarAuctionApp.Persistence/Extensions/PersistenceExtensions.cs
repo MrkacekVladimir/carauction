@@ -1,4 +1,4 @@
-using CarAuctionApp.Domain;
+using CarAuctionApp.SharedKernel;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Users.Repositories;
 using CarAuctionApp.Persistence.Interceptors;

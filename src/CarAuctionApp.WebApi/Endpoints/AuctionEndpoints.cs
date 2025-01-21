@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using CarAuctionApp.Domain;
+using CarAuctionApp.SharedKernel;
 using CarAuctionApp.Domain.Auctions.Entities;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Auctions.ValueObjects;

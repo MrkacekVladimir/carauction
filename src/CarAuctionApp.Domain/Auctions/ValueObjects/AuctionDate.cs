@@ -1,4 +1,4 @@
-﻿using CarAuctionApp.Domain.Shared;
+﻿using CarAuctionApp.SharedKernel;
 
 namespace CarAuctionApp.Domain.Auctions.ValueObjects;
 

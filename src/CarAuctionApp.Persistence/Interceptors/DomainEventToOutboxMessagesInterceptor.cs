@@ -1,5 +1,5 @@
-﻿using CarAuctionApp.Domain;
-using CarAuctionApp.Persistence.Outbox;
+﻿using CarAuctionApp.Persistence.Outbox;
+using CarAuctionApp.SharedKernel;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Text.Json;
 

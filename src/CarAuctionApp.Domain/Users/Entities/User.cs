@@ -1,4 +1,5 @@
 using CarAuctionApp.Domain.Users.DomainEvents;
+using CarAuctionApp.SharedKernel;
 
 namespace CarAuctionApp.Domain.Users.Entities;
 

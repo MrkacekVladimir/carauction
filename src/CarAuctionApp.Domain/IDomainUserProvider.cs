@@ -1,9 +1,8 @@
 ﻿using CarAuctionApp.Domain.Users.Entities;
 
-namespace CarAuctionApp.Domain
+namespace CarAuctionApp.Domain;
+
+public interface IDomainUserProvider
 {
-    public interface IDomainUserProvider
-    {
-        public Task<User?> GetUserAsync();
-    }
+    public Task<User?> GetUserAsync();
 }

@@ -1,7 +1,7 @@
-using CarAuctionApp.Domain;
 using CarAuctionApp.Domain.Auctions.Entities;
 using CarAuctionApp.Domain.Users.Entities;
 using CarAuctionApp.Persistence.Outbox;
+using CarAuctionApp.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarAuctionApp.Persistence;

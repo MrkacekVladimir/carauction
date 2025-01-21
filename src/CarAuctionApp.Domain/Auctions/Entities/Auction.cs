@@ -1,16 +1,18 @@
 using CarAuctionApp.Domain.Auctions.DomainEvents;
 using CarAuctionApp.Domain.Auctions.ValueObjects;
-using CarAuctionApp.Domain.Shared;
+using CarAuctionApp.SharedKernel;
 using CarAuctionApp.Domain.Users.Entities;
 
 namespace CarAuctionApp.Domain.Auctions.Entities;
 
 public class Auction: AggregateRoot
 {
-    protected Auction()
+#pragma warning disable CS8618 
+    // EF Core required
+    private Auction()
     {
-        Title = null!;
     }
+#pragma warning restore CS8618 
 
     public Auction(string title, AuctionDate auctionDate)
     {

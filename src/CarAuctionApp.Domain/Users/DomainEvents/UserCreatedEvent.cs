@@ -1,3 +1,5 @@
-﻿namespace CarAuctionApp.Domain.Users.DomainEvents;
+﻿using CarAuctionApp.SharedKernel;
+
+namespace CarAuctionApp.Domain.Users.DomainEvents;
 
 public record UserCreatedEvent(Guid Id, string Username) : IDomainEvent;
