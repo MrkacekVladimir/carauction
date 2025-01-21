@@ -2,6 +2,38 @@
 
 Car Auction App is a web application written mostly in .NET technologies with focus on modern practices and frameworks.
 
+## Mentionable technologies
+
+- ASP.NET Core
+- ReactJS
+- Typescript
+
+- PostgreSQL as main relational database
+- RabbitMQ as message broker 
+- SQLite for unit testing
+
+- WebSockets for real time bidding feedback
+
+- Docker, Docker Compose
+
+## Mentionable libraries
+
+- MassTransit
+- EntityFramework Core
+- SignalR
+- xUnit
+
+- @tanstack/react-query
+
+## Used principles
+
+- Domain Driven Design
+- Clean Architecture
+- Background processing
+- Message queueing, Outbox pattern
+- Asynchronous programming
+- Dependency injection
+
 ## Project structure
 
 ### /src/
