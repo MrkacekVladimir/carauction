@@ -27,15 +27,15 @@ internal static class AuctionEndpoints
         auctionsGroup.MapGet("/", async (AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {
             var auctions = await dbContext.Auctions.AsNoTracking()
-            .Select(a => 
+            .Select(a =>
             new AuctionListItemDto(
                 a.Id,
                 a.Title,
                 a.Bids.Select(b => new AuctionBidDto(
                     b.Id,
                     b.Amount.Value,
-                    new AuctionBidUserDto(b.User.Id, b.User.Username)) 
-                ) 
+                    new AuctionBidUserDto(b.User.Id, b.User.Username))
+                )
             )).ToListAsync(cancellationToken);
 
             return Results.Json(auctions);
@@ -57,7 +57,7 @@ internal static class AuctionEndpoints
         auctionsGroup.MapPut("/{auctionId:guid}", async (Guid auctionId, CreateAuctionModel model, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
         {
             var auction = await auctionRepository.GetById(auctionId);
-            if(auction is null)
+            if (auction is null)
             {
                 return Results.NotFound();
             }
@@ -70,7 +70,7 @@ internal static class AuctionEndpoints
         auctionsGroup.MapDelete("/{auctionId:guid}", async (Guid auctionId, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
         {
             var auction = await auctionRepository.GetById(auctionId);
-            if(auction is null)
+            if (auction is null)
             {
                 return Results.NotFound();
             }
@@ -109,7 +109,7 @@ internal static class AuctionEndpoints
 
             BidAmount amount = new(model.Amount);
             var result = auction.AddBid(user, amount);
-            if(!result.IsSuccess)
+            if (!result.IsSuccess)
             {
                 return Results.BadRequest(result.Error);
             }

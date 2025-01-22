@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import { App } from "./App";
-import { AuctionListPage } from "./pages/AuctionListPage";
-import { AuctionDetailPage } from "./pages/AuctionDetailPage";
+import { AuctionListPage } from "./pages/auction-list/AuctionListPage";
+import { AuctionDetailPage } from "./pages/auction-detail/AuctionDetailPage";
 
 export function ApplicationRouter() {
   return (
