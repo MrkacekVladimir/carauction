@@ -10,6 +10,7 @@ public record AuctionBidUserDto(
 public record AuctionBidDto(
     [property: JsonPropertyName("id")] Guid Id,
     [property: JsonPropertyName("amount")] decimal Amount,
+    [property: JsonPropertyName("createdOn")] DateTime CreatedOn,
     [property: JsonPropertyName("user")] AuctionBidUserDto User
     );
 public record AuctionListItemDto(

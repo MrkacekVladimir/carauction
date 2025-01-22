@@ -27,6 +27,7 @@ internal static class AuctionEndpoints
                 a.Bids.Select(b => new AuctionBidDto(
                     b.Id,
                     b.Amount.Value,
+                    b.CreatedOn,
                     new AuctionBidUserDto(b.User.Id, b.User.Username))
                 )
             )).ToListAsync(cancellationToken);
@@ -51,24 +52,42 @@ internal static class AuctionEndpoints
 
         auctionsGroup.MapGet("/{auctionId:guid}", async (Guid auctionId, AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {
-            var auctionDto = await dbContext.Auctions.AsNoTracking()
-                .Select(a => new AuctionDto(
+            var data = await dbContext.Auctions.AsNoTracking()
+                .Where(a => a.Id == auctionId)
+                .Select(a => new
+                {
                     a.Id,
                     a.Title,
-                    a.Date.StartsOn,
-                    a.Date.EndsOn,
-                    a.Bids.Select(b => new AuctionBidDto(
-                            b.Id,
-                            b.Amount.Value,
-                            new AuctionBidUserDto(b.User.Id, b.User.Username))
-                        )
-                    )
-                )
-                .FirstOrDefaultAsync(a => a.Id == auctionId);
-            if (auctionDto is null)
+                    StartsOn = a.Date.StartsOn,
+                    EndsOn = a.Date.EndsOn,
+                    Bids = a.Bids.OrderByDescending(b => b.Amount.Value)
+                    .Select(b => new
+                    {
+                        b.Id,
+                        Amount = b.Amount.Value,
+                        b.CreatedOn,
+                        User = new { b.User.Id, b.User.Username }
+                    })
+                })
+                .FirstOrDefaultAsync();
+
+            if (data is null)
             {
                 return Results.NotFound();
             }
+
+            var auctionDto = new AuctionDto(
+                data.Id,
+                data.Title,
+                data.StartsOn,
+                data.EndsOn,
+                data.Bids.Select(b => new AuctionBidDto(
+                    b.Id,
+                    b.Amount,
+                    b.CreatedOn,
+                    new AuctionBidUserDto(b.User.Id, b.User.Username)
+                ))
+            );
 
             var result = new GetAuctionResponse(auctionDto);
             return Results.Json(result);
@@ -142,9 +161,11 @@ internal static class AuctionEndpoints
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
+            var bid = result.Value!;
+
             //TODO: Move sending price update to seperate service, because now we only send update to connected users to this application
             //This will cause issues when we have multiple instances of this application
-            await hubContext.Clients.Group(auctionId.ToString()).ReceiveBidUpdate(auctionId, model.Amount);
+            await hubContext.Clients.Group(auctionId.ToString()).ReceiveBidUpdate(auctionId, bid.Id, bid.Amount.Value, bid.CreatedOn);
 
             //TODO: Meaningful response, maybe CreatedAt route and also return DTO 
             return Results.Ok();

@@ -13,10 +13,5 @@ public class AuctionHub : Hub<IAuctionHubClient>
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, auctionId.ToString());
     }
-
-    public async Task SendBidUpdate(Guid auctionId, decimal bidAmount)
-    {
-        await Clients.Group(auctionId.ToString()).ReceiveBidUpdate(auctionId, bidAmount);
-    }
 }
 

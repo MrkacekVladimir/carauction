@@ -2,6 +2,6 @@
 
 public interface IAuctionHubClient
 {
-    Task ReceiveBidUpdate(Guid auctionId, decimal bidAmount);
+    Task ReceiveBidUpdate(Guid auctionId, Guid bidId, decimal bidAmount, DateTime createdOn);
 }
 

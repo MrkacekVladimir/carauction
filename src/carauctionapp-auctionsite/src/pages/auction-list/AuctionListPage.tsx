@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { useAuctionListQuery } from "./useAuctionListQuery";
 
 export function AuctionListPage() {
-  const { data: auctions, isPending, isError } = useAuctionListQuery();
+  const { data, isPending, isError } = useAuctionListQuery();
 
   if (isError) {
     return <div>Failed to load auction list...</div>;
@@ -12,13 +12,15 @@ export function AuctionListPage() {
     return <div>Loading auctions...</div>;
   }
 
+  const auctions = data.auctions;
+
   return (
     <div>
       <h1>Auction List Page</h1>
       <div>
         {auctions.map((a) => (
-          <section>
-            <div key={a.id}>{a.title}</div>
+          <section key={a.id}>
+            <div>{a.title}</div>
             <div>Bids: {a.bids.length}</div>
             <Link to={a.id}>To auction</Link>
           </section>

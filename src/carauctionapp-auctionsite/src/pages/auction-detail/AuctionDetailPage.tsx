@@ -1,21 +1,10 @@
-import { apiUrl } from "@/lib/api/config";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import { AuctionBiddingBook } from "../AuctionBiddingBook";
+import { Link, useParams } from "react-router";
+import { AuctionBiddingBook } from "../../components/bidding-book/AuctionBiddingBook";
+import { useAuctionQuery } from "./useAuctionQuery";
 
 export function AuctionDetailPage() {
   const { auctionId } = useParams();
-  const {
-    data: auction,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["auctions", auctionId],
-    queryFn: async () => {
-      const response = await fetch(`${apiUrl}/auctions/${auctionId}`);
-      return await response.json();
-    },
-  });
+  const { data, isPending, isError } = useAuctionQuery(auctionId!);
 
   if (isError || auctionId === undefined) {
     return <div>Failed to fetch auction...</div>;
@@ -25,10 +14,17 @@ export function AuctionDetailPage() {
     return <div>Loading auction...</div>;
   }
 
+  const auction = data.auction;
+
   return (
     <div>
-      <h1>Auction Detail {auctionId}</h1>
-      <AuctionBiddingBook auctionId={auctionId} />
+      <Link to={"/auctions"}>Back to auctions</Link>
+      <h1>{auction.title}</h1>
+      <ul>
+        <li>Starts On: {auction.startsOn.toLocaleString()}</li>
+        <li>Ends On: {auction.endsOn.toLocaleString()}</li>
+      </ul>
+      <AuctionBiddingBook auctionId={auctionId} initialBids={auction.bids} />
     </div>
   );
 }
