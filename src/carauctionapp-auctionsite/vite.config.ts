@@ -15,5 +15,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5010,
+    allowedHosts: true,
+    hmr: {
+      port: 5110,
+    },
   },
 });
