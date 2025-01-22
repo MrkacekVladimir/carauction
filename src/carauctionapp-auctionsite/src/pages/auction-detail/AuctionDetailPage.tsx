@@ -20,10 +20,16 @@ export function AuctionDetailPage() {
     <div>
       <Link to={"/auctions"}>Back to auctions</Link>
       <h1>{auction.title}</h1>
-      <ul>
-        <li>Starts On: {auction.startsOn.toLocaleString()}</li>
-        <li>Ends On: {auction.endsOn.toLocaleString()}</li>
-      </ul>
+      <div>
+        <div>
+          <b>Starts On: </b>
+          {auction.startsOn.toLocaleString()}
+        </div>
+        <div>
+          <b>Ends On: </b>
+          {auction.endsOn.toLocaleString()}
+        </div>
+      </div>
       <AuctionBiddingBook auctionId={auctionId} initialBids={auction.bids} />
     </div>
   );
