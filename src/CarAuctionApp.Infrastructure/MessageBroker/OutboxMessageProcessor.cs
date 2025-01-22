@@ -26,8 +26,6 @@ public sealed class OutboxMessageProcessor
 
     public async Task Process(CancellationToken cancellationToken)
     {
-        using var transaction = _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
         var outboxMessages = await _dbContext.OutboxMessages
             .Where(m => m.ProcessedOn == null)
             .OrderBy(m => m.CreatedOn)

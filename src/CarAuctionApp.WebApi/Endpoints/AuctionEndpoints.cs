@@ -7,16 +7,9 @@ using CarAuctionApp.Persistence;
 using CarAuctionApp.WebApi.Hubs;
 using CarAuctionApp.Domain.Auctions.Services;
 using CarAuctionApp.Application.Authentication;
+using CarAuctionApp.WebApi.Models.Auction;
 
 namespace CarAuctionApp.WebApi.Endpoints;
-
-//TODO: Move records to separate files
-public record CreateAuctionModel(string Title, DateTime StartsOn, DateTime EndsOn);
-public record CreateBidModel(decimal Amount);
-
-public record AuctionBidUserDto(Guid Id, string Username);
-public record AuctionBidDto(Guid Id, decimal Amount, AuctionBidUserDto User);
-public record AuctionListItemDto(Guid Id, string Title, IEnumerable<AuctionBidDto> bids);
 
 internal static class AuctionEndpoints
 {
@@ -27,37 +20,67 @@ internal static class AuctionEndpoints
         auctionsGroup.MapGet("/", async (AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {
             var auctions = await dbContext.Auctions.AsNoTracking()
-            .Select(a => 
+            .Select(a =>
             new AuctionListItemDto(
                 a.Id,
                 a.Title,
                 a.Bids.Select(b => new AuctionBidDto(
                     b.Id,
                     b.Amount.Value,
-                    new AuctionBidUserDto(b.User.Id, b.User.Username)) 
-                ) 
+                    new AuctionBidUserDto(b.User.Id, b.User.Username))
+                )
             )).ToListAsync(cancellationToken);
 
-            return Results.Json(auctions);
+            var result = new GetAuctionsResponse(auctions);
+            return Results.Json(result);
 
-        }).WithName("GetAuctions");
-        auctionsGroup.MapPost("/", async (CreateAuctionModel model, IUnitOfWork unitOfWork, IAuctionService auctionService, CancellationToken cancellationToken) =>
+        })
+            .WithName("GetAuctions")
+            .WithSummary("Gets all of the auctions")
+            .WithDescription("Retrieves a collection of auctions from the system.");
+
+        auctionsGroup.MapPost("/", async (CreateAuctionRequest model, IUnitOfWork unitOfWork, IAuctionService auctionService, CancellationToken cancellationToken) =>
         {
             var auction = await auctionService.CreateAuctionAsync(model.Title, model.StartsOn, model.EndsOn);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return Results.Json(auction);
-        }).WithName("CreateAuction");
+        })
+            .WithName("CreateAuction")
+            .WithSummary("Creates an auction")
+            .WithDescription("Based on the provided data creates a new auction to the system.");
+
         auctionsGroup.MapGet("/{auctionId:guid}", async (Guid auctionId, AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {
             var auctionDto = await dbContext.Auctions.AsNoTracking()
-                .Select(a => a) //TODO: Create DTO
+                .Select(a => new AuctionDto(
+                    a.Id,
+                    a.Title,
+                    a.Date.StartsOn,
+                    a.Date.EndsOn,
+                    a.Bids.Select(b => new AuctionBidDto(
+                            b.Id,
+                            b.Amount.Value,
+                            new AuctionBidUserDto(b.User.Id, b.User.Username))
+                        )
+                    )
+                )
                 .FirstOrDefaultAsync(a => a.Id == auctionId);
-            return Results.Json(auctionDto);
-        }).WithName("GetAuctionById");
-        auctionsGroup.MapPut("/{auctionId:guid}", async (Guid auctionId, CreateAuctionModel model, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
+            if (auctionDto is null)
+            {
+                return Results.NotFound();
+            }
+
+            var result = new GetAuctionResponse(auctionDto);
+            return Results.Json(result);
+        })
+            .WithName("GetAuctionById")
+            .WithSummary("Gets an auction by UUID")
+            .WithDescription("Retrieves an auction from the system based on UUID");
+
+        auctionsGroup.MapPut("/{auctionId:guid}", async (Guid auctionId, CreateAuctionRequest model, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
         {
             var auction = await auctionRepository.GetById(auctionId);
-            if(auction is null)
+            if (auction is null)
             {
                 return Results.NotFound();
             }
@@ -66,11 +89,12 @@ internal static class AuctionEndpoints
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return Results.Json(auction);
-        }).WithName("UpdateAuctionById");
+        }).WithName("UpdateAuctionById"); //TODO: OpenAPI metadata
+
         auctionsGroup.MapDelete("/{auctionId:guid}", async (Guid auctionId, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
         {
             var auction = await auctionRepository.GetById(auctionId);
-            if(auction is null)
+            if (auction is null)
             {
                 return Results.NotFound();
             }
@@ -79,15 +103,17 @@ internal static class AuctionEndpoints
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Results.Ok();
-        }).WithName("DeleteAuction");
+        }).WithName("DeleteAuction"); //TODO: OpenAPI metadata
+
         auctionsGroup.MapGet("/{auctionId:guid}/bids", async (Guid auctionId, AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {
             var bids = await dbContext.AuctionBids.Where(b => b.AuctionId == auctionId).ToListAsync(cancellationToken);
             return Results.Json(bids);
-        }).WithName("GetAuctionBids");
+        }).WithName("GetAuctionBids");//TODO: OpenAPI metadata
+
         auctionsGroup.MapPost("/{auctionId:guid}/bids", async (
             Guid auctionId,
-            CreateBidModel model,
+            CreateBidRequest model,
             ICurrentUserProvider currentUserProvider,
             IAuctionRepository auctionRepository,
             IUnitOfWork unitOfWork,
@@ -109,7 +135,7 @@ internal static class AuctionEndpoints
 
             BidAmount amount = new(model.Amount);
             var result = auction.AddBid(user, amount);
-            if(!result.IsSuccess)
+            if (!result.IsSuccess)
             {
                 return Results.BadRequest(result.Error);
             }
@@ -122,7 +148,7 @@ internal static class AuctionEndpoints
 
             //TODO: Meaningful response, maybe CreatedAt route and also return DTO 
             return Results.Ok();
-        }).WithName("CreateAuctionBid");
+        }).WithName("CreateAuctionBid");//TODO: OpenAPI metadata
 
     }
 
