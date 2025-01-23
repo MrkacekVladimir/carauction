@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export function isDateString(value: any) {
   if (typeof value !== "string") return false;
   const dateStringRegex =

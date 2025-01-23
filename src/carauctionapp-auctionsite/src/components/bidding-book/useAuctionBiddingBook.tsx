@@ -1,4 +1,4 @@
-import { useConfig } from "@/hooks/useConfig";
+import { apiUrl } from "@/lib/api/config";
 import { AuctionBidDto } from "@/lib/api/types";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useState, useEffect } from "react";
@@ -13,7 +13,6 @@ export function useAuctionBiddingBook(
   auctionId: string,
   initialBids: AuctionBidDto[]
 ) {
-  const config = useConfig();
   const [connected, setConnected] = useState(false);
   const [bids, setBids] = useState<BiddingBookBid[]>(
     initialBids.map((b) => ({
@@ -24,8 +23,8 @@ export function useAuctionBiddingBook(
   );
 
   useEffect(() => {
-    let connection = new HubConnectionBuilder()
-      .withUrl(`${config.apiUrl}/hubs/auction`)
+    const connection = new HubConnectionBuilder()
+      .withUrl(`${apiUrl}/hubs/auction`)
       .build();
 
     connection.on(
@@ -51,7 +50,7 @@ export function useAuctionBiddingBook(
     return () => {
       connection.stop();
     };
-  }, []);
+  }, [auctionId]);
 
   return { connected, bids };
 }
