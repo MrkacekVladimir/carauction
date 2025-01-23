@@ -45,6 +45,8 @@ builder.Services.AddMassTransit(busConfigurator =>
             hostConfigurator.Username(options.Value.Username);
             hostConfigurator.Password(options.Value.Password);
         });
+
+        configurator.ConfigureEndpoints(context);
     });
 });
 builder.Services.AddScoped<OutboxMessageProcessor>();

@@ -1,6 +1,8 @@
 export type AuctionListItemDto = {
   id: string;
   title: string;
+  startsOn: Date;
+  endsOn: Date;
   bids: AuctionBidDto[];
 };
 

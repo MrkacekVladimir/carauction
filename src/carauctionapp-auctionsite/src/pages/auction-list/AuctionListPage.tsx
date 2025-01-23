@@ -1,5 +1,5 @@
-import { Link } from "react-router";
 import { useAuctionListQuery } from "./useAuctionListQuery";
+import { AuctionCard } from "@/components/auction-card/AuctionCard";
 
 export function AuctionListPage() {
   const { data, isPending, isError } = useAuctionListQuery();
@@ -19,11 +19,7 @@ export function AuctionListPage() {
       <h1>Auction List Page</h1>
       <div>
         {auctions.map((a) => (
-          <section key={a.id}>
-            <div>{a.title}</div>
-            <div>Bids: {a.bids.length}</div>
-            <Link to={a.id}>To auction</Link>
-          </section>
+          <AuctionCard key={a.id} auction={a} />
         ))}
       </div>
     </div>
