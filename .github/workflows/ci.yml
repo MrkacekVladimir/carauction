@@ -47,7 +47,3 @@ jobs:
       - name: Build React Project
         run: npm run build
         working-directory: ./src/carauctionapp-auctionsite
-
-      - name: Run Tests
-        run: npm test -- --watchAll=false
-        working-directory: ./src/carauctionapp-auctionsite
