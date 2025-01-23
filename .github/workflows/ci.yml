@@ -36,6 +36,10 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Run Linter
+        run: npm run lint
+        working-directory: ./src/carauctionapp-auctionsite
+
       - name: Install Dependencies
         run: npm ci
         working-directory: ./src/carauctionapp-auctionsite
