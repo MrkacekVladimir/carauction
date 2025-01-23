@@ -43,6 +43,7 @@ Car Auction App is a web application written mostly in .NET technologies with fo
 - CarAuctionApp.Application = Application specific logic for serving specific use-cases and handling input validation
 - CarAuctionApp.Domain = Core of our domain processes and logic
 - CarAuctionApp.Infrastructure = Interaction with external services such as RabbitMQ for messaging queues
+- CarAuctionApp.Persistence = Split from Infrastructure layer to clearly seperate persistence in EF Core
 - CarAuctionApp.SharedKernel = Shared abstractions, utility classes across our whole application
 
 ### /tests/
