@@ -1,5 +1,7 @@
 # Car Auction
 
+The application is still under development, sometimes you can see missing or WIP stuff.
+
 Car Auction App is a web application written mostly in .NET technologies with focus on modern practices and frameworks.
 
 ## Mentionable technologies
