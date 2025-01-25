@@ -12,7 +12,7 @@ public class AuctionTests
     {
         // Arrange
         AuctionDate auctionDate = AuctionDate.Create(DateTime.UtcNow, DateTime.UtcNow.AddDays(2)).Value!;
-        Auction auction = new Auction("Test auction", auctionDate);
+        Auction auction = Auction.Create("Test auction", auctionDate).Value!;
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
 
@@ -27,14 +27,14 @@ public class AuctionTests
     }
 
     [Fact]
-    public void Constructor_ShouldRaiseUserCreatedEvent()
+    public void Create_ShouldRaiseUserCreatedEvent()
     {
         // Arrange
         string title = "Test auction";
         AuctionDate auctionDate = AuctionDate.Create(DateTime.UtcNow, DateTime.UtcNow.AddDays(2)).Value!;
 
         // Act
-        Auction auction = new Auction(title, auctionDate);
+        Auction auction = Auction.Create(title, auctionDate).Value!;
         var events = auction.DomainEvents.ToList();
 
         // Assert
@@ -45,11 +45,11 @@ public class AuctionTests
     }
 
     [Fact]
-    public void AddBid_ShouldThrow_WhenAmountIsLowerThanCurrentMaxBid()
+    public void AddBid_ShouldReturnError_WhenAmountIsLowerThanCurrentMaxBid()
     {
         // Arrange
         AuctionDate auctionDate = AuctionDate.Create(DateTime.UtcNow, DateTime.UtcNow.AddDays(2)).Value!;
-        Auction auction = new Auction("Test auction", auctionDate);
+        Auction auction = Auction.Create("Test auction", auctionDate).Value!;
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
         auction.AddBid(user, amount);
@@ -63,11 +63,33 @@ public class AuctionTests
     }
 
     [Fact]
-    public void AddBid_ShouldThrow_WhenAmountIsEqualToCurrentMaxBid()
+    public void AddBid_ShouldReturnError_WhenAmountIsEqualToCurrentMaxBid()
     {
         // Arrange
         AuctionDate auctionDate = AuctionDate.Create(DateTime.UtcNow, DateTime.UtcNow.AddDays(2)).Value!;
-        Auction auction = new Auction("Test auction", auctionDate);
+        Auction auction = Auction.Create("Test auction", auctionDate).Value!;
+        User user = new User("Test user");
+        BidAmount amount = new BidAmount(1000);
+        auction.AddBid(user, amount);
+
+        // Act
+        var result = auction.AddBid(user, amount);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Null(result.Value);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void AddBid_ShouldReturnError_WhenAuctionIsNotOpen(bool future)
+    {
+        // Arrange
+        DateTime start = future ? DateTime.UtcNow.AddHours(5) : DateTime.UtcNow.AddDays(-2);
+        DateTime end = future ? DateTime.UtcNow.AddHours(8) : DateTime.UtcNow.AddDays(-1);
+        AuctionDate auctionDate = AuctionDate.Create(start, end).Value!;
+        Auction auction = Auction.Create("Test auction", auctionDate).Value!;
         User user = new User("Test user");
         BidAmount amount = new BidAmount(1000);
         auction.AddBid(user, amount);

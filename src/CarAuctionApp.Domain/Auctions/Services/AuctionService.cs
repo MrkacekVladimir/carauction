@@ -9,6 +9,7 @@ public interface IAuctionService
 {
     Task<Result<Auction?>> CreateAuctionAsync(string title, DateTime startsOn, DateTime endsOn);
 }   
+
 public class AuctionService: IAuctionService
 {
     private readonly IAuctionRepository _auctionRepository;
@@ -26,7 +27,13 @@ public class AuctionService: IAuctionService
             return Result<Auction?>.Failure(auctionDateResult.Error);
         }
 
-        var auction = new Auction(title, auctionDateResult.Value);
+        var result = Auction.Create(title, auctionDateResult.Value);
+        if(!result.IsSuccess)
+        {
+            return Result<Auction?>.Failure(result.Error);
+        }
+
+        var auction = result.Value!;
 
         await _auctionRepository.AddAsync(auction);
 
