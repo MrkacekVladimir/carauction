@@ -42,6 +42,34 @@ internal static class AuctionEndpoints
             .WithSummary("Gets all of the auctions")
             .WithDescription("Retrieves a collection of auctions from the system.");
 
+        auctionsGroup.MapGet("/full-text", async (string search, AuctionDbContext dbContext, CancellationToken cancellationToken) =>
+        {
+            var auctions = await dbContext.Auctions.AsNoTracking()
+            .Where(a => EF.Functions.ToTsVector("english", a.Title + " " + a.Description) //TODO: Abstract this Postgres specific logic
+                .Matches(EF.Functions.PhraseToTsQuery("english", search)))
+            .Select(a =>
+            new AuctionListItemDto(
+                a.Id,
+                a.Title,
+                a.Date.StartsOn,
+                a.Date.EndsOn,
+                a.Bids.Select(b => new AuctionBidDto(
+                    b.Id,
+                    b.Amount.Value,
+                    b.CreatedOn,
+                    new AuctionBidUserDto(b.User.Id, b.User.Username))
+                )
+            )).ToListAsync(cancellationToken);
+
+            var result = new GetAuctionsResponse(auctions);
+            return Results.Json(result);
+
+        })
+            .WithName("GetAuctionsByFullText")
+            .WithSummary("Gets all of the auctions based on the full text search")
+            .WithDescription("Retrieves a collection of auctions from the system based on full text filtering.");
+
+
         auctionsGroup.MapPost("/", async (CreateAuctionRequest model, IUnitOfWork unitOfWork, IAuctionService auctionService, CancellationToken cancellationToken) =>
         {
             var auction = await auctionService.CreateAuctionAsync(model.Title, model.StartsOn, model.EndsOn);

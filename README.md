@@ -26,6 +26,10 @@ Car Auction App is a web application written mostly in .NET technologies with fo
 - xUnit
 
 - @tanstack/react-query
+- zod
+- react-hook-form
+
+- LangChain (WIP)
 
 ## Used principles
 
@@ -54,3 +58,10 @@ Car Auction App is a web application written mostly in .NET technologies with fo
 - CarAuctionApp.Infrastructure.UnitTests = xUnit project covering unit tests for infrastructure communication
 - CarAuctionApp.Persistence.UnitTests = xUnit project covering unit tests for specific for persisting data
 - CarAuctionApp.TestUtilities = Shared library for all tests containing utility classes and helper methods
+
+## Goals for future
+
+- Add authentication
+- Add a chat bot for car recommendation, use LangChain to connect LLM to our database
+- Add analytics application which subscribes to RabbitMQ, gets the data, aggregates them and displays them via graphs and reports
+  

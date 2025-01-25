@@ -15,6 +15,10 @@ internal sealed class AuctionTypeConfiguration : AggregateRootTypeConfiguration<
           .ValueGeneratedNever()
           .IsRequired();
 
+        builder.HasIndex(x => new { x.Title, x.Description })
+          .HasMethod("GIN")
+          .IsTsVectorExpressionIndex("english");
+
         builder.OwnsOne(x => x.Date, y =>
         {
             y.Property(x => x.StartsOn)
