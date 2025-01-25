@@ -1,13 +1,14 @@
 import { AuctionBidDto } from "@/lib/api/types";
+import { AuctionBidInput } from "@/components/bid-input";
 import { useAuctionBiddingBook } from "./useAuctionBiddingBook";
-import { AuctionBidInput } from "../bid-input/AuctionBidInput";
 
 interface Props {
   auctionId: string;
   initialBids?: AuctionBidDto[];
+  canBid: boolean;
 }
 
-export function AuctionBiddingBook({ auctionId, initialBids }: Props) {
+export function AuctionBiddingBook({ auctionId, initialBids, canBid }: Props) {
   const { connected, bids } = useAuctionBiddingBook(
     auctionId,
     initialBids ?? []
@@ -20,7 +21,7 @@ export function AuctionBiddingBook({ auctionId, initialBids }: Props) {
   return (
     <div>
       <h2>Bidding book</h2>
-      <AuctionBidInput auctionId={auctionId} />
+      {canBid && <AuctionBidInput auctionId={auctionId} />}
       <table>
         <thead>
           <tr>

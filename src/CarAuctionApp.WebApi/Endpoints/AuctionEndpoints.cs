@@ -24,6 +24,8 @@ internal static class AuctionEndpoints
             new AuctionListItemDto(
                 a.Id,
                 a.Title,
+                a.Date.StartsOn,
+                a.Date.EndsOn,
                 a.Bids.Select(b => new AuctionBidDto(
                     b.Id,
                     b.Amount.Value,

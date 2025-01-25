@@ -16,6 +16,8 @@ public record AuctionBidDto(
 public record AuctionListItemDto(
     [property: JsonPropertyName("id")] Guid Id,
     [property: JsonPropertyName("title")] string Title,
+    [property: JsonPropertyName("startsOn")] DateTime StartsOn,
+    [property: JsonPropertyName("endsOn")] DateTime EndsOn,
     [property: JsonPropertyName("bids")] IEnumerable<AuctionBidDto> bids
     );
 public record AuctionDto(

@@ -1,5 +1,6 @@
 import { apiUrl } from "@/lib/api/config";
 import { GetAuctionsResponse } from "@/lib/api/types";
+import { jsonReviver } from "@/utils/json";
 import { useQuery } from "@tanstack/react-query";
 
 export function useAuctionListQuery() {
@@ -7,8 +8,8 @@ export function useAuctionListQuery() {
     queryKey: ["auctions"],
     queryFn: async () => {
       const response = await fetch(`${apiUrl}/auctions`);
-      const jsonData = await response.json();
-      return jsonData as GetAuctionsResponse;
+      const textData = await response.text();
+      return JSON.parse(textData, jsonReviver) as GetAuctionsResponse;
     },
   });
 }

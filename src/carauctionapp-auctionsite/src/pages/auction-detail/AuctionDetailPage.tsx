@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router";
-import { AuctionBiddingBook } from "../../components/bidding-book/AuctionBiddingBook";
+import { AuctionBiddingBook } from "@/components/bidding-book";
+import { CountdownTimer } from "@/components/countdown-timer";
 import { useAuctionQuery } from "./useAuctionQuery";
 
 export function AuctionDetailPage() {
@@ -15,6 +16,9 @@ export function AuctionDetailPage() {
   }
 
   const auction = data.auction;
+  const today = new Date();
+  const isUpcoming = today < auction.startsOn;
+  const canBid = auction.startsOn >= today && auction.endsOn <= today;
 
   return (
     <div>
@@ -30,7 +34,15 @@ export function AuctionDetailPage() {
           {auction.endsOn.toLocaleString()}
         </div>
       </div>
-      <AuctionBiddingBook auctionId={auctionId} initialBids={auction.bids} />
+      {isUpcoming && <CountdownTimer targetDate={auction.startsOn} />}
+
+      {!isUpcoming && (
+        <AuctionBiddingBook
+          auctionId={auctionId}
+          initialBids={auction.bids}
+          canBid={canBid}
+        />
+      )}
     </div>
   );
 }

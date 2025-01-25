@@ -1,5 +1,7 @@
+import { AuctionCard } from "@/components/auction-card";
+import { AuctionFilter } from "@/components/auction-filter";
 import { useAuctionListQuery } from "./useAuctionListQuery";
-import { AuctionCard } from "@/components/auction-card/AuctionCard";
+import classes from "./AuctionListPage.module.css";
 
 export function AuctionListPage() {
   const { data, isPending, isError } = useAuctionListQuery();
@@ -16,12 +18,13 @@ export function AuctionListPage() {
 
   return (
     <div>
-      <h1>Auction List Page</h1>
-      <div>
+      <h1>Auctions</h1>
+      <AuctionFilter />
+      <section className={classes.auctionList}>
         {auctions.map((a) => (
           <AuctionCard key={a.id} auction={a} />
         ))}
-      </div>
+      </section>
     </div>
   );
 }

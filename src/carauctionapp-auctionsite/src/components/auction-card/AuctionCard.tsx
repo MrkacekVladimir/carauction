@@ -8,13 +8,17 @@ interface Props {
 }
 export function AuctionCard({ auction }: Props) {
   return (
-    <section className={classes.card}>
+    <section className={classes.wrapper}>
       <div className={classes.image}>
         <img src={carSvg} alt="Car" />
       </div>
       <div className={classes.details}>
-        <div>{auction.title}</div>
-        <div>Bids: {auction.bids.length}</div>
+        <div className={classes.title}>{auction.title}</div>
+        <div className={classes.description}>
+          <div>Starts on: {auction.startsOn.toLocaleString()}</div>
+          <div>Ends on: {auction.endsOn.toLocaleString()}</div>
+          <div>Bids: {auction.bids.length}</div>
+        </div>
         <Link to={auction.id}>To auction</Link>
       </div>
     </section>
