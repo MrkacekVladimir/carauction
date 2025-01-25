@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CarAuctionApp.Persistence.Migrations
 {
     [DbContext(typeof(AuctionDbContext))]
-    [Migration("20250120220536_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20250125205130_InitDatabase")]
+    partial class InitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,11 +28,14 @@ namespace CarAuctionApp.Persistence.Migrations
             modelBuilder.Entity("CarAuctionApp.Domain.Auctions.Entities.Auction", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("LastUpdatedOn")
                         .HasColumnType("timestamp with time zone");
@@ -43,13 +46,17 @@ namespace CarAuctionApp.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Title", "Description")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Title", "Description"), "GIN");
+
                     b.ToTable("Auctions", (string)null);
                 });
 
             modelBuilder.Entity("CarAuctionApp.Domain.Auctions.Entities.AuctionBid", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AuctionId")
@@ -76,7 +83,6 @@ namespace CarAuctionApp.Persistence.Migrations
             modelBuilder.Entity("CarAuctionApp.Domain.Users.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
@@ -97,13 +103,15 @@ namespace CarAuctionApp.Persistence.Migrations
             modelBuilder.Entity("CarAuctionApp.Persistence.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Data")
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Payload")
                         .IsRequired()
                         .HasColumnType("text");
 

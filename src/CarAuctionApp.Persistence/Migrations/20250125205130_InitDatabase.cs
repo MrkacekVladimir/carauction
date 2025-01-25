@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CarAuctionApp.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetup : Migration
+    public partial class InitDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,6 +17,7 @@ namespace CarAuctionApp.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
                     StartsOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndsOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastBidOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -34,7 +35,8 @@ namespace CarAuctionApp.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Type = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Data = table.Column<string>(type: "text", nullable: false),
+                    Payload = table.Column<string>(type: "text", nullable: false),
+                    Error = table.Column<string>(type: "text", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ProcessedOn = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -94,6 +96,13 @@ namespace CarAuctionApp.Persistence.Migrations
                 name: "IX_AuctionBids_UserId",
                 table: "AuctionBids",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Auctions_Title_Description",
+                table: "Auctions",
+                columns: new[] { "Title", "Description" })
+                .Annotation("Npgsql:IndexMethod", "GIN")
+                .Annotation("Npgsql:TsVectorConfig", "english");
         }
 
         /// <inheritdoc />
