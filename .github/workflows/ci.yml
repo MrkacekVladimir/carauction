@@ -47,3 +47,46 @@ jobs:
       - name: Build React Project
         run: npm run build
         working-directory: ./src/carauctionapp-auctionsite
+  python-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 black mypy pytest pytest-cov pip-audit
+
+      - name: Lint with flake8
+        run: |
+          source venv/bin/activate
+          flake8 ./src/ai/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Check formatting with black
+        run: |
+          source venv/bin/activate
+          black --check ./src/ai/
+
+      - name: Type check with mypy
+        run: |
+          source venv/bin/activate
+          mypy ./src/ai/
+
+      - name: Run tests
+        run: |
+          source venv/bin/activate
+          pytest --cov=./src/ai/ --cov-report=xml
+
+      - name: Run pip-audit
+        run: |
+          source venv/bin/activate
+          pip-audit
