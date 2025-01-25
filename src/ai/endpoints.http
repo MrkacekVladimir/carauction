@@ -1,0 +1,6 @@
+POST http://localhost:8000/process-query
+Content-Type: application/json
+
+{
+    "query": "your_query_here"
+}

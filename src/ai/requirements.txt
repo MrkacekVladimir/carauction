@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+langchain
+psycopg2
+openai
