@@ -26,6 +26,7 @@ jobs:
         working-directory: ./src
 
   dotnet-publish:
+    if: false
     runs-on: ubuntu-latest
     needs: dotnet-build
     steps:
