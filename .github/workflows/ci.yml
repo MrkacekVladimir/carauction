@@ -43,9 +43,9 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           IMAGE_NAME=${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ secrets.CONTAINER_APP_NAME }}:latest
-          docker build -t $IMAGE_NAME .
+          docker build -t $IMAGE_NAME -f ./CarAuctionApp.WebApi/Dockerfile .
           docker push $IMAGE_NAME
-        working-directory: ./src/CarAuctionApp.WebApi/
+        working-directory: ./src
 
   react-build:
     runs-on: ubuntu-latest
