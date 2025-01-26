@@ -54,7 +54,9 @@ builder.Services.AddHostedService<OutboxMessagesBackgroundService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+//TODO: For production purposes it will be better to apply migrations to the database manually
+bool shouldApplyMigrations = app.Environment.IsDevelopment() || app.Environment.IsProduction();
+if (shouldApplyMigrations)
 {
     await app.ApplyMigrationsAsync();
     await app.SeedDevelopmentData();
