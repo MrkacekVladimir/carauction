@@ -33,7 +33,7 @@ public class Auction: AggregateRoot
 
     public Guid Id { get; private set; }
     public string Title { get; private set; }
-    public string Description { get; private set; }
+    public string Description { get; private set; } = "";
     public AuctionDate Date { get; private set; }
 
     private List<AuctionBid> _bids = new List<AuctionBid>();

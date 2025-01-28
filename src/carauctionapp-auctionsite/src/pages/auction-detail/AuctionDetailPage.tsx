@@ -18,7 +18,7 @@ export function AuctionDetailPage() {
   const auction = data.auction;
   const today = new Date();
   const isUpcoming = today < auction.startsOn;
-  const canBid = auction.startsOn >= today && auction.endsOn <= today;
+  const canBid = auction.startsOn <= today && auction.endsOn >= today;
 
   return (
     <div>
