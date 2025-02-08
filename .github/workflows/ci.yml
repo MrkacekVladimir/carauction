@@ -68,15 +68,15 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-        working-directory: ./src/carauctionapp-auctionsite
+        working-directory: ./src/app/carauctionapp-auctionsite
 
       - name: Run Linter
         run: npm run lint
-        working-directory: ./src/carauctionapp-auctionsite
+        working-directory: ./src/app/carauctionapp-auctionsite
 
       - name: Build React Project
         run: npm run build
-        working-directory: ./src/carauctionapp-auctionsite
+        working-directory: ./src/app/carauctionapp-auctionsite
 
   python-lint:
     runs-on: ubuntu-latest
