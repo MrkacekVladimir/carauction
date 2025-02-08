@@ -15,9 +15,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\CarAuctionApp.Application\CarAuctionApp.Application.csproj" />
-	  <ProjectReference Include="..\..\src\CarAuctionApp.Domain\CarAuctionApp.Domain.csproj" />
-	  <ProjectReference Include="..\..\src\CarAuctionApp.Infrastructure\CarAuctionApp.Infrastructure.csproj" />
-	  <ProjectReference Include="..\..\src\CarAuctionApp.Persistence\CarAuctionApp.Persistence.csproj" />
+	  <ProjectReference Include="..\..\src\app\CarAuctionApp.Application\CarAuctionApp.Application.csproj" />
+	  <ProjectReference Include="..\..\src\app\CarAuctionApp.Domain\CarAuctionApp.Domain.csproj" />
+	  <ProjectReference Include="..\..\src\app\CarAuctionApp.Infrastructure\CarAuctionApp.Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\src\app\CarAuctionApp.Persistence\CarAuctionApp.Persistence.csproj" />
+	  <ProjectReference Include="..\..\src\app\CarAuctionApp.WebApi\CarAuctionApp.WebApi.csproj" />
+	  <ProjectReference Include="..\..\src\shared\CarAuctionApp.SharedKernel\CarAuctionApp.SharedKernel.csproj" />
 	</ItemGroup>
 </Project>

@@ -15,7 +15,7 @@ internal static class AuctionEndpoints
 {
     public static void MapAuctionEndpoints(this WebApplication app)
     {
-        var auctionsGroup = app.MapGroup("/auctions");
+        var auctionsGroup = app.MapGroup("/auctions").WithTags("Auction");
 
         auctionsGroup.MapGet("/", async (AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {

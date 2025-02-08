@@ -1,0 +1,22 @@
+services:
+
+  carauctionapp-webapi:
+    image: ${DOCKER_REGISTRY-}carauctionappwebapi
+    build:
+      context: .
+      dockerfile: ../app/CarAuctionApp.WebApi/Dockerfile
+
+  carauctionapp-reporting-webapi:
+    image: ${DOCKER_REGISTRY-}carauctionappreportingwebapi
+    build:
+      context: .
+      dockerfile: ../reporting/CarAuctionApp.Reporting.WebApi/Dockerfile
+
+  carauctionapp-postgres:
+    image: postgres:17
+
+  carauctionapp-reporting-postgres:
+    image: postgres:17
+
+  carauctionapp-rabbitmq:
+    image: rabbitmq:4-management
