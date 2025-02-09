@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddSingleton(new ReportingConnectionFactory(builder.Configuration.GetConnectionString("ReportingPostgres")));
+builder.Services.AddSingleton(new ReportingConnectionFactory(builder.Configuration.GetConnectionString("ReportingPostgres")!));
 
 builder.Services.Configure<MessageBrokerSettings>(builder.Configuration.GetSection("MessageBroker"));
 builder.Services.AddMassTransit(busConfig =>
