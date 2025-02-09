@@ -1,5 +1,11 @@
 services:
 
+  carauctionapp-processor:
+    image: ${DOCKER_REGISTRY-}carauctionappprocessor
+    build:
+      context: .
+      dockerfile: ../app/CarAuctionApp.Processor/Dockerfile
+
   carauctionapp-webapi:
     image: ${DOCKER_REGISTRY-}carauctionappwebapi
     build:

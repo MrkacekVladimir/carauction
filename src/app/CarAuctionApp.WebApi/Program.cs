@@ -5,11 +5,6 @@ using CarAuctionApp.Persistence.Extensions;
 using CarAuctionApp.WebApi.Extensions;
 using CarAuctionApp.WebApi.Endpoints;
 using CarAuctionApp.WebApi.Hubs;
-using CarAuctionApp.Infrastructure.MessageBroker;
-using MassTransit;
-using Microsoft.Extensions.Options;
-using CarAuctionApp.WebApi.BackgroundServices;
-using CarAuctionApp.Domain.Auctions.DomainEvents;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,29 +27,6 @@ builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPo
 builder.Services.AddDomainServices();
 builder.Services.AddApiServices();
 
-builder.Services.Configure<MessageBrokerSettings>(builder.Configuration.GetSection("MessageBroker"));
-builder.Services.AddMassTransit(busConfig =>
-{
-    busConfig.SetKebabCaseEndpointNameFormatter();
-
-    busConfig.UsingRabbitMq((context, config) =>
-    {
-        IOptions<MessageBrokerSettings> options = context.GetRequiredService<IOptions<MessageBrokerSettings>>();
-
-        config.Host(new Uri(options.Value.Host), hostConfigurator =>
-        {
-            hostConfigurator.Username(options.Value.Username);
-            hostConfigurator.Password(options.Value.Password);
-        });
-
-        config.ConfigureEndpoints(context);
-    });
-});
-
-//TODO: We need to have seperate application as a processor
-//Now with multiple instances of the application we will have multiple instances of the processor
-builder.Services.AddScoped<OutboxMessageProcessor>();
-builder.Services.AddHostedService<OutboxMessagesBackgroundService>();
 
 var app = builder.Build();
 

@@ -1,5 +1,25 @@
 services:
 
+  carauctionapp-processor:
+    container_name: carauctionapp-processor
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:5021;http://+:5020
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=dev123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    depends_on:
+      carauctionapp-postgres:
+        condition: service_started
+      carauctionapp-rabbitmq:
+        condition: service_started
+    ports:
+      - "5020:5020"
+      - "5021:5021"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ~/.aspnet/https:/https:ro
+
   carauctionapp-webapi:
     container_name: carauctionapp-webapi
     environment:

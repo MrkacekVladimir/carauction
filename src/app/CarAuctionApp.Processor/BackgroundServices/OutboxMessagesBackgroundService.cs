@@ -1,6 +1,6 @@
 ﻿using CarAuctionApp.Infrastructure.MessageBroker;
 
-namespace CarAuctionApp.WebApi.BackgroundServices
+namespace CarAuctionApp.Processor.BackgroundServices
 {
     internal sealed class OutboxMessagesBackgroundService: BackgroundService
     {
