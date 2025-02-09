@@ -1,4 +1,6 @@
-using CarAuctionApp.Reporting.Infrastructure.MessageBroker;
+using CarAuctionApp.Reporting.Data;
+using CarAuctionApp.Reporting.Data.MessageBroker;
+using CarAuctionApp.Reporting.WebApi.Consumers;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
@@ -11,29 +13,34 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5010")
+            .WithOrigins("http://localhost:6010")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
     });
 });
 
-builder.Services.Configure<MessageBrokerSettings>(builder.Configuration.GetSection("MessageBroker"));
-builder.Services.AddMassTransit(busConfigurator =>
-{
-    busConfigurator.SetKebabCaseEndpointNameFormatter();
 
-    busConfigurator.UsingRabbitMq((context, configurator) =>
+builder.Services.AddSingleton(new ReportingConnectionFactory(builder.Configuration.GetConnectionString("ReportingPostgres")));
+
+builder.Services.Configure<MessageBrokerSettings>(builder.Configuration.GetSection("MessageBroker"));
+builder.Services.AddMassTransit(busConfig =>
+{
+    busConfig.SetKebabCaseEndpointNameFormatter();
+
+    busConfig.AddConsumer<AuctionBidCreatedEventConsumer>();
+
+    busConfig.UsingRabbitMq((context, config) =>
     {
         IOptions<MessageBrokerSettings> options = context.GetRequiredService<IOptions<MessageBrokerSettings>>();
 
-        configurator.Host(new Uri(options.Value.Host), hostConfigurator =>
+        config.Host(new Uri(options.Value.Host), hostConfigurator =>
         {
             hostConfigurator.Username(options.Value.Username);
             hostConfigurator.Password(options.Value.Password);
         });
 
-        configurator.ConfigureEndpoints(context);
+        config.ConfigureEndpoints(context);
     });
 });
 

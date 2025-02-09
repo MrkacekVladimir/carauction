@@ -9,6 +9,7 @@ using CarAuctionApp.Infrastructure.MessageBroker;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using CarAuctionApp.WebApi.BackgroundServices;
+using CarAuctionApp.Domain.Auctions.DomainEvents;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,28 +28,31 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddPersistence(builder.Configuration.GetConnectionString("carauctionapp.postgres")!);
+builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
 builder.Services.AddDomainServices();
 builder.Services.AddApiServices();
 
 builder.Services.Configure<MessageBrokerSettings>(builder.Configuration.GetSection("MessageBroker"));
-builder.Services.AddMassTransit(busConfigurator =>
+builder.Services.AddMassTransit(busConfig =>
 {
-    busConfigurator.SetKebabCaseEndpointNameFormatter();
+    busConfig.SetKebabCaseEndpointNameFormatter();
 
-    busConfigurator.UsingRabbitMq((context, configurator) =>
+    busConfig.UsingRabbitMq((context, config) =>
     {
         IOptions<MessageBrokerSettings> options = context.GetRequiredService<IOptions<MessageBrokerSettings>>();
 
-        configurator.Host(new Uri(options.Value.Host), hostConfigurator =>
+        config.Host(new Uri(options.Value.Host), hostConfigurator =>
         {
             hostConfigurator.Username(options.Value.Username);
             hostConfigurator.Password(options.Value.Password);
         });
 
-        configurator.ConfigureEndpoints(context);
+        config.ConfigureEndpoints(context);
     });
 });
+
+//TODO: We need to have seperate application as a processor
+//Now with multiple instances of the application we will have multiple instances of the processor
 builder.Services.AddScoped<OutboxMessageProcessor>();
 builder.Services.AddHostedService<OutboxMessagesBackgroundService>();
 

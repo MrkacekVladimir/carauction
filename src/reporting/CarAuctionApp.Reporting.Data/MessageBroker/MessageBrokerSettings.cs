@@ -1,4 +1,4 @@
-﻿namespace CarAuctionApp.Reporting.Infrastructure.MessageBroker;
+﻿namespace CarAuctionApp.Reporting.Data.MessageBroker;
 
 public sealed class MessageBrokerSettings
 {

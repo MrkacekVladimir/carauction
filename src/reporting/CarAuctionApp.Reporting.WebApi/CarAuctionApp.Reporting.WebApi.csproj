@@ -14,11 +14,10 @@
 		<PackageReference Include="Scalar.AspNetCore" Version="2.0.*" />
 	</ItemGroup>
 
-
 	<ItemGroup>
-		<ProjectReference Include="..\CarAuctionApp.Reporting.Data\CarAuctionApp.Reporting.Persistence.csproj" />
-		<ProjectReference Include="..\CarAuctionApp.Reporting.Infrastructure\CarAuctionApp.Reporting.Infrastructure.csproj" />
-		<ProjectReference Include="..\CarAuctionApp.Reporting.Persistence\CarAuctionApp.Reporting.Persistence.csproj" />
+	  <ProjectReference Include="..\..\shared\CarAuctionApp.Contracts\CarAuctionApp.Contracts.csproj" />
+	  <ProjectReference Include="..\..\shared\CarAuctionApp.SharedKernel\CarAuctionApp.SharedKernel.csproj" />
+	  <ProjectReference Include="..\CarAuctionApp.Reporting.Data\CarAuctionApp.Reporting.Data.csproj" />
 	</ItemGroup>
 
 </Project>
