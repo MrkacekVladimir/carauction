@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
+builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
