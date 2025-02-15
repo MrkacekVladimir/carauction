@@ -5,8 +5,18 @@ using CarAuctionApp.Persistence.Extensions;
 using CarAuctionApp.WebApi.Extensions;
 using CarAuctionApp.WebApi.Endpoints;
 using CarAuctionApp.WebApi.Hubs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Logs;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration .ReadFrom.Configuration(context.Configuration);
+});
 
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
@@ -21,6 +31,27 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService("WebApi"))
+    .WithMetrics(metrics =>
+    {
+        metrics.AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation();
+
+        metrics.AddOtlpExporter();
+    })
+    .WithTracing(tracing =>
+    {
+        tracing.AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddEntityFrameworkCoreInstrumentation();
+
+        tracing.AddOtlpExporter();
+    });
+
+builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
@@ -39,6 +70,8 @@ if (shouldApplyMigrations)
 }
 
 app.UseHttpsRedirection();
+
+app.UseSerilogRequestLogging();
 
 app.MapOpenApi();
 app.MapScalarApiReference(options =>

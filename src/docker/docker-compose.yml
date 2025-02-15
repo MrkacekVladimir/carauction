@@ -26,3 +26,7 @@ services:
 
   carauctionapp-rabbitmq:
     image: rabbitmq:4-management
+
+  carauctionapp-jaeger:
+    image: jaegertracing/all-in-one:latest
+
