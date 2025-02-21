@@ -5,23 +5,22 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CarAuctionApp.Application
+namespace CarAuctionApp.Application;
+
+internal class DomainEventDispatcher(IMediator mediator) : IDomainEventDispatcher
 {
-    internal class DomainEventDispatcher(IMediator mediator) : IDomainEventDispatcher
+    public async Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        public async Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
-        {
-            await mediator.Publish(domainEvent, cancellationToken);
-        }
+        await mediator.Publish(domainEvent, cancellationToken);
+    }
 
-        public async Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default)
-        {
-            List<IDomainEvent> events = domainEvents.ToList();
+    public async Task DispatchAsync(IEnumerable<IDomainEvent> domainEvents, CancellationToken cancellationToken = default)
+    {
+        List<IDomainEvent> events = domainEvents.ToList();
 
-            foreach (IDomainEvent @event in events)
-            {
-                await DispatchAsync(@event, cancellationToken);
-            }
+        foreach (IDomainEvent @event in events)
+        {
+            await DispatchAsync(@event, cancellationToken);
         }
     }
 }

@@ -72,7 +72,7 @@ internal static class AuctionEndpoints
             .WithDescription("Retrieves a collection of auctions from the system based on full text filtering.");
 
 
-        auctionsGroup.MapPost("/", async (CreateAuction.Command command, IMediator mediator, CancellationToken cancellationToken) =>
+        auctionsGroup.MapPost("/", async (CreateAuctionCommand command, IMediator mediator, CancellationToken cancellationToken) =>
         {
             Auction auction = await mediator.Send(command);
             return Results.Json(auction);

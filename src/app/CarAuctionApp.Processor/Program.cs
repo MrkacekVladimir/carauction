@@ -9,6 +9,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
+using CarAuctionApp.Application.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddApplicationServices();
 builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
 builder.Services.AddDomainServices();
 

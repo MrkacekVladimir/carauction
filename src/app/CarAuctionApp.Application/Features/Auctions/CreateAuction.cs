@@ -9,36 +9,33 @@ using System.Threading.Tasks;
 
 namespace CarAuctionApp.Application.Features.Auctions;
 
-public class CreateAuction
+public record CreateAuctionCommand(string Title, DateTime StartsOn, DateTime EndsOn) : IRequest<Auction>;
+
+public class CreateAuctionHandler(IAuctionRepository auctionRepository, IUnitOfWork unitOfWork) : IRequestHandler<CreateAuctionCommand, Auction>
 {
-    public record Command(string Title, DateTime StartsOn, DateTime EndsOn) : IRequest<Auction>;
-
-    public class Handler(IAuctionRepository auctionRepository, IUnitOfWork unitOfWork) : IRequestHandler<Command, Auction>
+    public async Task<Auction> Handle(CreateAuctionCommand request, CancellationToken cancellationToken)
     {
-        public async Task<Auction> Handle(Command request, CancellationToken cancellationToken)
+        var auctionDateResult = AuctionDate.Create(request.StartsOn, request.EndsOn);
+        if (!auctionDateResult.IsSuccess || auctionDateResult.Value == null)
         {
-            var auctionDateResult = AuctionDate.Create(request.StartsOn, request.EndsOn);
-            if (!auctionDateResult.IsSuccess || auctionDateResult.Value == null)
-            {
-                //TODO: Remove exceptions
-                throw new Exception(auctionDateResult.Error.ToString());
-            }
-
-            var result = Auction.Create(request.Title, auctionDateResult.Value);
-            if (!result.IsSuccess)
-            {
-                //TODO: Remove exceptions
-                throw new Exception(result.Error.ToString());
-            }
-
-            var auction = result.Value!;
-
-            await auctionRepository.AddAsync(auction, cancellationToken);
-
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return auction;
-
+            //TODO: Remove exceptions
+            throw new Exception(auctionDateResult.Error.ToString());
         }
+
+        var result = Auction.Create(request.Title, auctionDateResult.Value);
+        if (!result.IsSuccess)
+        {
+            //TODO: Remove exceptions
+            throw new Exception(result.Error.ToString());
+        }
+
+        var auction = result.Value!;
+
+        await auctionRepository.AddAsync(auction, cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return auction;
+
     }
 }

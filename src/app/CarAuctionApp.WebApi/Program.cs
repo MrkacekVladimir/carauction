@@ -11,7 +11,8 @@ using OpenTelemetry.Trace;
 using OpenTelemetry.Logs;
 using Serilog;
 using CarAuctionApp.Application.Extensions;
-using CarAuctionApp.Application;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CarAuctionApp.WebApi.Transformers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,12 @@ builder.Host.UseSerilog((context, configuration) =>
 });
 
 builder.Services.AddHealthChecks();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    //TODO: Add auth scheme before using transformer
+    //options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
+
 builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
@@ -56,7 +62,6 @@ builder.Services.AddOpenTelemetry()
 builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(ApplicationAssemblyReference.Assembly)); 
 builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
 builder.Services.AddApplicationServices();
 builder.Services.AddDomainServices();
@@ -82,6 +87,12 @@ app.MapScalarApiReference(options =>
 {
     options.Title = "Car Auction App";
     options.Servers = Array.Empty<ScalarServer>();
+
+    options.WithPreferredScheme(JwtBearerDefaults.AuthenticationScheme)
+        .WithHttpBearerAuthentication(bearer =>
+        {
+            bearer.Token = "your-bearer-token";
+        });
 });
 
 app.UseCors("AllowAll");
