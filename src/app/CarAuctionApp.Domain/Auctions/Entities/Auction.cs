@@ -2,6 +2,7 @@ using CarAuctionApp.Domain.Auctions.DomainEvents;
 using CarAuctionApp.Domain.Auctions.ValueObjects;
 using CarAuctionApp.SharedKernel;
 using CarAuctionApp.Domain.Users.Entities;
+using CarAuctionApp.SharedKernel.Domain;
 
 namespace CarAuctionApp.Domain.Auctions.Entities;
 
@@ -20,7 +21,7 @@ public class Auction: AggregateRoot
         Title = title;
         Date = auctionDate;
 
-        _domainEvents.Add(new AuctionCreatedEvent(Id, title));
+        _domainEvents.Add(new AuctionCreatedDomainEvent(Id, title));
     }
 
     public static Result<Auction?> Create(string title, AuctionDate auctionDate)
@@ -56,13 +57,13 @@ public class Auction: AggregateRoot
         }
 
         _bids.Add(bid);
-        _domainEvents.Add(new AuctionBidCreatedEvent(Id, amount.Value));
+        _domainEvents.Add(new AuctionBidCreatedDomainEvent(Id, amount.Value));
 
         TimeSpan timeLeft = Date.EndsOn - Date.LastBidOn!.Value;
         if(timeLeft.TotalSeconds < 60)
         {
             Date.ExtendEndsOn(TimeSpan.FromMinutes(1));
-            _domainEvents.Add(new AuctionEndsOnExtendedEvent(Id, Date.EndsOn));
+            _domainEvents.Add(new AuctionEndsOnExtendedDomainEvent(Id, Date.EndsOn));
         }
 
         return Result<AuctionBid?>.Success(bid);

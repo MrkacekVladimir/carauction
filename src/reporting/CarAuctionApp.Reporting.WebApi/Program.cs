@@ -13,6 +13,7 @@ builder.Host.UseSerilog((context, configuration) =>
     configuration .ReadFrom.Configuration(context.Configuration);
 });
 
+builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {

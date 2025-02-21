@@ -1,4 +1,4 @@
-﻿using CarAuctionApp.SharedKernel;
+﻿using CarAuctionApp.SharedKernel.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

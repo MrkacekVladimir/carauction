@@ -1,5 +1,5 @@
 using CarAuctionApp.Domain.Users.DomainEvents;
-using CarAuctionApp.SharedKernel;
+using CarAuctionApp.SharedKernel.Domain;
 
 namespace CarAuctionApp.Domain.Users.Entities;
 
@@ -15,7 +15,7 @@ public class User: AggregateRoot
         Id = Guid.NewGuid();
         Username = username;
 
-        _domainEvents.Add(new UserCreatedEvent(Id, username));
+        _domainEvents.Add(new UserCreatedDomainEvent(Id, username));
     }
 
     public Guid Id { get; private set; }

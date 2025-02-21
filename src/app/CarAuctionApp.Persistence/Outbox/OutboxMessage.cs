@@ -1,4 +1,4 @@
-﻿using CarAuctionApp.SharedKernel;
+﻿using CarAuctionApp.Contracts.IntegrationEvents;
 using System.Text.Json;
 
 namespace CarAuctionApp.Persistence.Outbox;
@@ -33,17 +33,17 @@ public class OutboxMessage
         ProcessedOn = DateTime.UtcNow;
     }
 
-    public static OutboxMessage MapToOutboxMessage(IDomainEvent domainEvent)
+    public static OutboxMessage MapToOutboxMessage(IIntegrationEvent integrationEvent)
     {
         var options = new JsonSerializerOptions
         {
             WriteIndented = false,
         };
 
-        var type = domainEvent.GetType();
+        var type = integrationEvent.GetType();
         return new OutboxMessage(
             type.FullName!,
-            JsonSerializer.Serialize(domainEvent, type, options)
+            JsonSerializer.Serialize(integrationEvent, type, options)
         );
     }
 }

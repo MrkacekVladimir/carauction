@@ -6,7 +6,7 @@
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>430b6523-1e5c-44e2-906e-072ef7856a5f</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/scalar</DockerServiceUrl>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/scalar/v1</DockerServiceUrl>
     <DockerServiceName>carauctionapp-webapi</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>

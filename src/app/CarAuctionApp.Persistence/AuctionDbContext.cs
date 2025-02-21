@@ -1,12 +1,11 @@
 using CarAuctionApp.Domain.Auctions.Entities;
 using CarAuctionApp.Domain.Users.Entities;
 using CarAuctionApp.Persistence.Outbox;
-using CarAuctionApp.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarAuctionApp.Persistence;
 
-public class AuctionDbContext : DbContext, IUnitOfWork
+public class AuctionDbContext : DbContext
 {
 
     public AuctionDbContext(DbContextOptions options) : base(options)

@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.Reporting.Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.Processor", "app\CarAuctionApp.Processor\CarAuctionApp.Processor.csproj", "{6FB9DE15-02E9-409C-8A20-6B17343AB920}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuctionApp.SharedKernel.Domain", "shared\CarAuctionApp.SharedKernel.Domain\CarAuctionApp.SharedKernel.Domain.csproj", "{0B569D10-8825-4F4C-820B-7822F3D83D36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{6FB9DE15-02E9-409C-8A20-6B17343AB920}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FB9DE15-02E9-409C-8A20-6B17343AB920}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FB9DE15-02E9-409C-8A20-6B17343AB920}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B569D10-8825-4F4C-820B-7822F3D83D36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B569D10-8825-4F4C-820B-7822F3D83D36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B569D10-8825-4F4C-820B-7822F3D83D36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B569D10-8825-4F4C-820B-7822F3D83D36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,5 +143,6 @@ Global
 		{6B5FB1D3-A2B8-4014-8003-EBC7D4740FDC} = {79764597-E50C-47D3-8CD3-8C353882C63D}
 		{7E1710B2-8BF3-48C5-B1F9-788B8BC5E39C} = {9AABDAA8-E4F3-414C-AE60-9E6CEA9C45EB}
 		{6FB9DE15-02E9-409C-8A20-6B17343AB920} = {6D583BDC-46A7-4BC9-8D44-5924F9EE0CC2}
+		{0B569D10-8825-4F4C-820B-7822F3D83D36} = {79764597-E50C-47D3-8CD3-8C353882C63D}
 	EndGlobalSection
 EndGlobal

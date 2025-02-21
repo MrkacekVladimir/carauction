@@ -10,14 +10,17 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Logs;
 using Serilog;
+using CarAuctionApp.Application.Extensions;
+using CarAuctionApp.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, configuration) =>
 {
-    configuration .ReadFrom.Configuration(context.Configuration);
+    configuration.ReadFrom.Configuration(context.Configuration);
 });
 
+builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
@@ -53,8 +56,9 @@ builder.Services.AddOpenTelemetry()
 builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
 
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(ApplicationAssemblyReference.Assembly)); 
 builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
+builder.Services.AddApplicationServices();
 builder.Services.AddDomainServices();
 builder.Services.AddApiServices();
 

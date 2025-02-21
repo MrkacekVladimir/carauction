@@ -1,16 +1,18 @@
-﻿using CarAuctionApp.Domain.Users.DomainEvents;
+﻿using CarAuctionApp.Contracts.IntegrationEvents;
+using CarAuctionApp.Domain.Users.DomainEvents;
 using CarAuctionApp.Infrastructure.MessageBroker;
 using CarAuctionApp.Persistence;
 using CarAuctionApp.Persistence.Outbox;
-using CarAuctionApp.SharedKernel;
+using CarAuctionApp.SharedKernel.Domain;
 using MassTransit;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using System.Data.Common;
 
 namespace CarAuctionApp.Infrastructure.UnitTests.MessageBroker
 {
+    public record CustomTestIntegrationEvent(Guid Id, string Username): IIntegrationEvent;
+
     public class OutboxMessageProcessorTests
     {
         private readonly AuctionDbContext _dbContext;
@@ -48,9 +50,9 @@ namespace CarAuctionApp.Infrastructure.UnitTests.MessageBroker
         public async Task Process_Should_PublishAllWithoutErrors()
         {
             //Arrange
-            List<IDomainEvent> events = [
-                new UserCreatedEvent(Guid.NewGuid(), "Test1"),
-                new UserCreatedEvent(Guid.NewGuid(), "Test2")
+            List<IIntegrationEvent> events = [
+                new CustomTestIntegrationEvent(Guid.NewGuid(), "Test1"),
+                new CustomTestIntegrationEvent(Guid.NewGuid(), "Test2")
                 ];
             var outboxMessages = events.Select(OutboxMessage.MapToOutboxMessage);
             _dbContext.OutboxMessages.AddRange(outboxMessages);
