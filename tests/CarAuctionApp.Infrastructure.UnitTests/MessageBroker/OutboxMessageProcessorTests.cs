@@ -1,4 +1,5 @@
 ﻿using CarAuctionApp.Contracts.IntegrationEvents;
+using CarAuctionApp.Contracts.IntegrationEvents.Test;
 using CarAuctionApp.Domain.Users.DomainEvents;
 using CarAuctionApp.Infrastructure.MessageBroker;
 using CarAuctionApp.Persistence;
@@ -11,7 +12,6 @@ using NSubstitute;
 
 namespace CarAuctionApp.Infrastructure.UnitTests.MessageBroker
 {
-    public record CustomTestIntegrationEvent(Guid Id, string Username): IIntegrationEvent;
 
     public class OutboxMessageProcessorTests
     {
@@ -51,8 +51,8 @@ namespace CarAuctionApp.Infrastructure.UnitTests.MessageBroker
         {
             //Arrange
             List<IIntegrationEvent> events = [
-                new CustomTestIntegrationEvent(Guid.NewGuid(), "Test1"),
-                new CustomTestIntegrationEvent(Guid.NewGuid(), "Test2")
+                new TestIntegrationEvent(Guid.NewGuid(), "Test1"),
+                new TestIntegrationEvent(Guid.NewGuid(), "Test2")
                 ];
             var outboxMessages = events.Select(OutboxMessage.MapToOutboxMessage);
             _dbContext.OutboxMessages.AddRange(outboxMessages);

@@ -1,4 +1,4 @@
-﻿using CarAuctionApp.Domain;
+﻿using CarAuctionApp.Contracts;
 using CarAuctionApp.Persistence;
 using CarAuctionApp.Persistence.Outbox;
 using MassTransit;
@@ -69,7 +69,7 @@ public sealed class OutboxMessageProcessor
             return resolvedType;
         }
 
-        Type type = DomainAssemblyReference.Assembly.GetType(messageType)!;
+        Type type = ContractsAssemblyReference.Assembly.GetType(messageType)!;
         CachedResolvedTypes.Add(messageType, type);
         return type;
     }
