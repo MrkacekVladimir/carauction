@@ -22,10 +22,10 @@ builder.Host.UseSerilog((context, configuration) =>
 });
 
 builder.Services.AddHealthChecks();
+builder.Services.AddAuthentication();
 builder.Services.AddOpenApi(options =>
 {
-    //TODO: Add auth scheme before using transformer
-    //options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
 builder.Services.AddSignalR();
