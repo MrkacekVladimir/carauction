@@ -4,9 +4,16 @@ using CarAuctionApp.Reporting.WebApi.Consumers;
 using MassTransit;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration .ReadFrom.Configuration(context.Configuration);
+});
+
+builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>
@@ -47,6 +54,8 @@ builder.Services.AddMassTransit(busConfig =>
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+
+app.UseSerilogRequestLogging();
 
 app.MapOpenApi();
 app.MapScalarApiReference(options =>

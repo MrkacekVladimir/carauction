@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\CarAuctionApp.SharedKernel\CarAuctionApp.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\shared\CarAuctionApp.SharedKernel.Domain\CarAuctionApp.SharedKernel.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using CarAuctionApp.SharedKernel;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Auctions.ValueObjects;
 using CarAuctionApp.Persistence;
 using CarAuctionApp.WebApi.Hubs;
-using CarAuctionApp.Domain.Auctions.Services;
 using CarAuctionApp.Application.Authentication;
 using CarAuctionApp.WebApi.Models.Auction;
+using MediatR;
+using CarAuctionApp.Application.Features.Auctions;
+using CarAuctionApp.Domain.Auctions.Entities;
+using CarAuctionApp.SharedKernel.Domain;
 
 namespace CarAuctionApp.WebApi.Endpoints;
 
@@ -70,10 +72,9 @@ internal static class AuctionEndpoints
             .WithDescription("Retrieves a collection of auctions from the system based on full text filtering.");
 
 
-        auctionsGroup.MapPost("/", async (CreateAuctionRequest model, IUnitOfWork unitOfWork, IAuctionService auctionService, CancellationToken cancellationToken) =>
+        auctionsGroup.MapPost("/", async (CreateAuctionCommand command, IMediator mediator, CancellationToken cancellationToken) =>
         {
-            var auction = await auctionService.CreateAuctionAsync(model.Title, model.StartsOn, model.EndsOn);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+            Auction auction = await mediator.Send(command);
             return Results.Json(auction);
         })
             .WithName("CreateAuction")

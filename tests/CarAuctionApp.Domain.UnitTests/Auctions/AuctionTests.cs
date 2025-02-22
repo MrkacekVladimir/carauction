@@ -40,8 +40,8 @@ public class AuctionTests
         // Assert
         Assert.Single(events);
         var createdEvent = events[0];
-        Assert.True(createdEvent is AuctionCreatedEvent);
-        Assert.Equal(title, (createdEvent as AuctionCreatedEvent)!.Title);
+        Assert.True(createdEvent is AuctionCreatedDomainEvent);
+        Assert.Equal(title, (createdEvent as AuctionCreatedDomainEvent)!.Title);
     }
 
     [Fact]

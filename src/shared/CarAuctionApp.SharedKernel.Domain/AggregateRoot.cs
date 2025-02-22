@@ -1,4 +1,4 @@
-﻿namespace CarAuctionApp.SharedKernel;
+﻿namespace CarAuctionApp.SharedKernel.Domain;
 public abstract class AggregateRoot: EntityBase
 {
     protected List<IDomainEvent> _domainEvents = new List<IDomainEvent>();

@@ -5,10 +5,29 @@ using CarAuctionApp.Persistence.Extensions;
 using CarAuctionApp.WebApi.Extensions;
 using CarAuctionApp.WebApi.Endpoints;
 using CarAuctionApp.WebApi.Hubs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Logs;
+using Serilog;
+using CarAuctionApp.Application.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CarAuctionApp.WebApi.Transformers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+});
+
+builder.Services.AddHealthChecks();
+builder.Services.AddAuthentication();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
+
 builder.Services.AddSignalR();
 builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>
@@ -22,9 +41,30 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
-builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService("WebApi"))
+    .WithMetrics(metrics =>
+    {
+        metrics.AddHttpClientInstrumentation()
+        .AddAspNetCoreInstrumentation();
+
+        metrics.AddOtlpExporter();
+    })
+    .WithTracing(tracing =>
+    {
+        tracing.AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddEntityFrameworkCoreInstrumentation();
+
+        tracing.AddOtlpExporter();
+    });
+
+builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
+builder.Services.AddApplicationServices();
 builder.Services.AddDomainServices();
 builder.Services.AddApiServices();
 
@@ -41,11 +81,19 @@ if (shouldApplyMigrations)
 
 app.UseHttpsRedirection();
 
+app.UseSerilogRequestLogging();
+
 app.MapOpenApi();
 app.MapScalarApiReference(options =>
 {
     options.Title = "Car Auction App";
     options.Servers = Array.Empty<ScalarServer>();
+
+    options.WithPreferredScheme(JwtBearerDefaults.AuthenticationScheme)
+        .WithHttpBearerAuthentication(bearer =>
+        {
+            bearer.Token = "your-bearer-token";
+        });
 });
 
 app.UseCors("AllowAll");

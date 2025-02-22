@@ -13,13 +13,13 @@ public class AuctionRepository : IAuctionRepository
         this._dbContext = dbContext;
     }
 
-    public Task AddAsync(Auction auction)
+    public Task AddAsync(Auction auction, CancellationToken cancellationToken = default)
     {
         _dbContext.Auctions.Add(auction);
         return Task.CompletedTask;
     }
 
-    public async Task<Auction?> GetById(Guid id)
+    public async Task<Auction?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dbContext.Auctions
             .Include(x => x.Bids)
@@ -27,7 +27,7 @@ public class AuctionRepository : IAuctionRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public Task RemoveAsync(Auction auction)
+    public Task RemoveAsync(Auction auction, CancellationToken cancellationToken = default)
     {
         _dbContext.Auctions.Remove(auction);
         return Task.CompletedTask;

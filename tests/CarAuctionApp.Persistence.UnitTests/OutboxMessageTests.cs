@@ -1,9 +1,8 @@
-﻿using CarAuctionApp.Persistence.Outbox;
-using CarAuctionApp.SharedKernel;
+﻿using CarAuctionApp.Contracts.IntegrationEvents.Test;
+using CarAuctionApp.Persistence.Outbox;
 
 namespace CarAuctionApp.Persistence.UnitTests
 {
-    public record CustomTestEvent(Guid Id, string Username): IDomainEvent;
 
     public class OutboxMessageTests
     {
@@ -13,13 +12,13 @@ namespace CarAuctionApp.Persistence.UnitTests
             //Arrange
             Guid id = Guid.NewGuid();
             string username = "TestUsername";
-            IDomainEvent domainEvent = new CustomTestEvent(id, username);
+            TestIntegrationEvent integrationEvent = new TestIntegrationEvent(id, username);
 
             //Act
-            OutboxMessage message = OutboxMessage.MapToOutboxMessage(domainEvent);
+            OutboxMessage message = OutboxMessage.MapToOutboxMessage(integrationEvent);
 
             //Assert
-            Assert.Equal(domainEvent.GetType().FullName, message.Type);
+            Assert.Equal(integrationEvent.GetType().FullName, message.Type);
             Assert.Equal(string.Format("{{\"Id\":\"{0}\",\"Username\":\"{1}\"}}", id.ToString(), username), message.Payload);
         }
     }

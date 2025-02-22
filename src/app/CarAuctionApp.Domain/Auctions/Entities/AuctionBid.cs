@@ -1,6 +1,6 @@
 using CarAuctionApp.Domain.Auctions.ValueObjects;
 using CarAuctionApp.Domain.Users.Entities;
-using CarAuctionApp.SharedKernel;
+using CarAuctionApp.SharedKernel.Domain;
 
 namespace CarAuctionApp.Domain.Auctions.Entities;
 

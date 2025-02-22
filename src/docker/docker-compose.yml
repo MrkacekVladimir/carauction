@@ -1,28 +1,38 @@
+name: carauctionapp
 services:
-
-  carauctionapp-processor:
-    image: ${DOCKER_REGISTRY-}carauctionappprocessor
+  processor:
+    image: ${DOCKER_REGISTRY-}processor
     build:
       context: .
       dockerfile: ../app/CarAuctionApp.Processor/Dockerfile
 
-  carauctionapp-webapi:
-    image: ${DOCKER_REGISTRY-}carauctionappwebapi
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
     build:
       context: .
       dockerfile: ../app/CarAuctionApp.WebApi/Dockerfile
 
-  carauctionapp-reporting-webapi:
-    image: ${DOCKER_REGISTRY-}carauctionappreportingwebapi
+  reporting-webapi:
+    image: ${DOCKER_REGISTRY-}reportingwebapi
     build:
       context: .
       dockerfile: ../reporting/CarAuctionApp.Reporting.WebApi/Dockerfile
 
-  carauctionapp-postgres:
+  postgres:
     image: postgres:17
 
-  carauctionapp-reporting-postgres:
+  reporting-postgres:
     image: postgres:17
 
-  carauctionapp-rabbitmq:
+  rabbitmq:
     image: rabbitmq:4-management
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+
+  keycloak-postgres:
+      image: postgres:17
+  
+  keycloak:
+      image: quay.io/keycloak/keycloak:latest
+

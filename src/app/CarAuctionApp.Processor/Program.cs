@@ -4,14 +4,27 @@ using CarAuctionApp.Domain.Extensions;
 using CarAuctionApp.Persistence.Extensions;
 using MassTransit;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+using Serilog;
+using CarAuctionApp.Application.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+});
+
+builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddApplicationServices();
 builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
 builder.Services.AddDomainServices();
 
@@ -33,6 +46,26 @@ builder.Services.AddMassTransit(busConfig =>
         config.ConfigureEndpoints(context);
     });
 });
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService("Processor"))
+    .WithMetrics(metrics =>
+    {
+        metrics.AddHttpClientInstrumentation()
+            .AddAspNetCoreInstrumentation();
+
+        metrics.AddOtlpExporter();
+    })
+    .WithTracing(tracing =>
+    {
+        tracing.AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName);
+
+        tracing.AddOtlpExporter();
+    });
+
+builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
 
 builder.Services.AddScoped<OutboxMessageProcessor>();
 builder.Services.AddHostedService<OutboxMessagesBackgroundService>();
@@ -45,6 +78,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseSerilogRequestLogging();
 
 app.MapHealthChecks("/health");
 
