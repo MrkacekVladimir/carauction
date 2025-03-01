@@ -1,0 +1,5 @@
+CREATE DATABASE reporting;
+CREATE DATABASE keycloak;
+
+GRANT ALL PRIVILEGES ON DATABASE reporting TO auctionadmin;
+GRANT ALL PRIVILEGES ON DATABASE keycloak TO auctionadmin;

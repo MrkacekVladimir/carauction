@@ -21,18 +21,12 @@ services:
   postgres:
     image: postgres:17
 
-  reporting-postgres:
-    image: postgres:17
-
   rabbitmq:
     image: rabbitmq:4-management
 
   jaeger:
     image: jaegertracing/all-in-one:latest
 
-  keycloak-postgres:
-      image: postgres:17
-  
   keycloak:
       image: quay.io/keycloak/keycloak:latest
 

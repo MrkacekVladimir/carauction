@@ -1,10 +1,7 @@
 ﻿using CarAuctionApp.Contracts.IntegrationEvents;
-using CarAuctionApp.Contracts.IntegrationEvents.Test;
-using CarAuctionApp.Domain.Users.DomainEvents;
 using CarAuctionApp.Infrastructure.MessageBroker;
 using CarAuctionApp.Persistence;
 using CarAuctionApp.Persistence.Outbox;
-using CarAuctionApp.SharedKernel.Domain;
 using MassTransit;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

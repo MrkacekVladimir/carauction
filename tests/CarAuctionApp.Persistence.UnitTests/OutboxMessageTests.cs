@@ -1,4 +1,4 @@
-﻿using CarAuctionApp.Contracts.IntegrationEvents.Test;
+﻿using CarAuctionApp.Contracts.IntegrationEvents;
 using CarAuctionApp.Persistence.Outbox;
 
 namespace CarAuctionApp.Persistence.UnitTests

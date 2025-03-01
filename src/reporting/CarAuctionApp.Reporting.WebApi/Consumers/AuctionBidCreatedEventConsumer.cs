@@ -1,11 +1,11 @@
-﻿using CarAuctionApp.Domain.Auctions.DomainEvents;
+﻿using CarAuctionApp.Contracts.IntegrationEvents.Auctions;
 using MassTransit;
 
 namespace CarAuctionApp.Reporting.WebApi.Consumers;
 
-public class AuctionBidCreatedEventConsumer : IConsumer<AuctionBidCreatedDomainEvent>
+public class AuctionBidCreatedEventConsumer : IConsumer<AuctionBidCreatedIntegrationEvent>
 {
-    public Task Consume(ConsumeContext<AuctionBidCreatedDomainEvent> context)
+    public Task Consume(ConsumeContext<AuctionBidCreatedIntegrationEvent> context)
     {
         return Task.CompletedTask;
     }

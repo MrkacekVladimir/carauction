@@ -1,3 +1,4 @@
+using CarAuctionApp.Application.Features.Auctions.Interfaces;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Users.Repositories;
 using CarAuctionApp.Persistence.Interceptors;
@@ -16,6 +17,8 @@ public static class ServiceCollectionExtensions
     public static void AddPersistence(this IServiceCollection services, string connectionString)
     {
         services.AddScoped<IAuctionRepository, AuctionRepository>();
+        services.AddScoped<IAuctionReadRepository, AuctionReadRepository>();
+
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();

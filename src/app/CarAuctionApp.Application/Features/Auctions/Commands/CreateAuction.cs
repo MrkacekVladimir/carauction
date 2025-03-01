@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CarAuctionApp.Application.Features.Auctions;
+namespace CarAuctionApp.Application.Features.Auctions.Commands;
 
 public record CreateAuctionCommand(string Title, DateTime StartsOn, DateTime EndsOn) : IRequest<Auction>;
 

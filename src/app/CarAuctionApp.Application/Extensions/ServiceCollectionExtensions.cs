@@ -1,4 +1,5 @@
-﻿using CarAuctionApp.SharedKernel.Domain;
+﻿using CarAuctionApp.Application.DomainEvents;
+using CarAuctionApp.SharedKernel.Domain;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CarAuctionApp.Application.Extensions;

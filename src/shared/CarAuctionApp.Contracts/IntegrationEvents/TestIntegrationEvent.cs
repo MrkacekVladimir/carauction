@@ -1,3 +1,3 @@
-﻿namespace CarAuctionApp.Contracts.IntegrationEvents.Test;
+﻿namespace CarAuctionApp.Contracts.IntegrationEvents;
 
 public record TestIntegrationEvent(Guid Id, string Username): IIntegrationEvent;

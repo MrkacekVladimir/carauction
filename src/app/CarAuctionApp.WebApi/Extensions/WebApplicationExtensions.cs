@@ -6,14 +6,14 @@ namespace CarAuctionApp.WebApi.Extensions;
 
 internal static class WebApplicationExtensions
 {
-    public static async Task ApplyMigrationsAsync(this WebApplication app)
+    internal static async Task ApplyMigrationsAsync(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AuctionDbContext>();
         await dbContext.Database.MigrateAsync();
     }
 
-    public static async Task SeedDevelopmentData(this WebApplication app)
+    internal static async Task SeedDevelopmentData(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<AuctionDbContext>();
@@ -24,4 +24,20 @@ internal static class WebApplicationExtensions
         }
     }
 
+    internal static void UseExceptionHandlerWithFallback(this WebApplication app)
+    {
+        app.UseExceptionHandler(exceptionHandlerApp =>
+        {
+            exceptionHandlerApp.Run(async httpContext =>
+            {
+                var pds = httpContext.RequestServices.GetService<IProblemDetailsService>();
+                if (pds == null
+                    || !await pds.TryWriteAsync(new() { HttpContext = httpContext }))
+                {
+                    // Fallback behavior
+                    await httpContext.Response.WriteAsync("Fallback: An error occurred.");
+                }
+            });
+        });
+    }
 }

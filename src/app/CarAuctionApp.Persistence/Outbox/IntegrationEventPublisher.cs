@@ -5,10 +5,9 @@ namespace CarAuctionApp.Persistence.Outbox;
 
 internal class IntegrationEventPublisher(AuctionDbContext dbContext) : IIntegrationEventPublisher
 {
-    public Task PublishAsync<TIntegrationEvent>(TIntegrationEvent integrationEvent, CancellationToken cancellationToken = default) where TIntegrationEvent : IIntegrationEvent
+    public async Task PublishAsync<TIntegrationEvent>(TIntegrationEvent integrationEvent, CancellationToken cancellationToken = default) where TIntegrationEvent : IIntegrationEvent
     {
         OutboxMessage message = OutboxMessage.MapToOutboxMessage(integrationEvent);
-        dbContext.OutboxMessages.Add(message);
-        return Task.CompletedTask;
+        await dbContext.OutboxMessages.AddAsync(message, cancellationToken);
     }
 }

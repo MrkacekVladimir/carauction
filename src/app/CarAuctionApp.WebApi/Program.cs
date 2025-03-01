@@ -21,6 +21,7 @@ builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration);
 });
 
+builder.Services.AddProblemDetails();
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthentication();
 builder.Services.AddOpenApi(options =>
@@ -63,13 +64,15 @@ builder.Services.AddOpenTelemetry()
 builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
+builder.Services.AddPersistence(builder.Configuration.GetConnectionString("Postgres")!);
 builder.Services.AddApplicationServices();
 builder.Services.AddDomainServices();
 builder.Services.AddApiServices();
 
 
 var app = builder.Build();
+
+app.UseExceptionHandlerWithFallback();
 
 //TODO: For production purposes it will be better to apply migrations to the database manually
 bool shouldApplyMigrations = app.Environment.IsDevelopment() || app.Environment.IsProduction();

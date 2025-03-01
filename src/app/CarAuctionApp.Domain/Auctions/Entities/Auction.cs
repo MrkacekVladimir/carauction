@@ -57,7 +57,7 @@ public class Auction: AggregateRoot
         }
 
         _bids.Add(bid);
-        _domainEvents.Add(new AuctionBidCreatedDomainEvent(Id, amount.Value));
+        _domainEvents.Add(new AuctionBidCreatedDomainEvent(Id, bid.Id, amount.Value));
 
         TimeSpan timeLeft = Date.EndsOn - Date.LastBidOn!.Value;
         if(timeLeft.TotalSeconds < 60)
