@@ -12,7 +12,6 @@ using OpenTelemetry.Logs;
 using Serilog;
 using CarAuctionApp.Application.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using CarAuctionApp.WebApi.Transformers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +25,7 @@ builder.Services.AddHealthChecks();
 builder.Services.AddAuthentication();
 builder.Services.AddOpenApi(options =>
 {
-    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    //options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
 builder.Services.AddSignalR();
@@ -92,11 +91,11 @@ app.MapScalarApiReference(options =>
     options.Title = "Car Auction App";
     options.Servers = Array.Empty<ScalarServer>();
 
-    options.WithPreferredScheme(JwtBearerDefaults.AuthenticationScheme)
-        .WithHttpBearerAuthentication(bearer =>
-        {
-            bearer.Token = "your-bearer-token";
-        });
+    //options.WithPreferredScheme(JwtBearerDefaults.AuthenticationScheme)
+    //    .WithHttpBearerAuthentication(bearer =>
+    //    {
+    //        bearer.Token = "your-bearer-token";
+    //    });
 });
 
 app.UseCors("AllowAll");

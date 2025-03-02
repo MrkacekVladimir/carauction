@@ -20,31 +20,40 @@ internal static class AuctionEndpoints
 
         auctionsGroup.MapGet("/", async (IMediator mediator, CancellationToken cancellationToken) =>
         {
-            var result = await mediator.Send(new GetAuctionsListQuery(), cancellationToken);
+            GetAuctionsListResponse result = await mediator.Send(new GetAuctionsListQuery(), cancellationToken);
             return Results.Json(result);
         })
             .WithName("GetAuctions")
             .WithSummary("Gets all of the auctions")
-            .WithDescription("Retrieves a collection of auctions from the system.");
+            .WithDescription("Retrieves a collection of auctions from the system.")
+            .Produces<GetAuctionsListResponse>();
 
         auctionsGroup.MapGet("/full-text", async (string searchTerm, IMediator mediator, CancellationToken cancellationToken) =>
         {
-            var result = await mediator.Send(new SearchListByFullTextQuery(searchTerm), cancellationToken);
+            SearchListByFullTextResponse result = await mediator.Send(new SearchListByFullTextQuery(searchTerm), cancellationToken);
             return Results.Json(result);
         })
             .WithName("GetAuctionsByFullText")
             .WithSummary("Gets all of the auctions based on the full text search")
-            .WithDescription("Retrieves a collection of auctions from the system based on full text filtering.");
+            .WithDescription("Retrieves a collection of auctions from the system based on full text filtering.")
+            .Produces<SearchListByFullTextResponse>();
 
 
         auctionsGroup.MapPost("/", async (CreateAuctionCommand command, IMediator mediator, CancellationToken cancellationToken) =>
         {
-            Auction auction = await mediator.Send(command, cancellationToken);
-            return Results.Json(auction);
+            Result<CreateAuctionResponse> result = await mediator.Send(command, cancellationToken);
+            if(!result.IsSuccess)
+            {
+                return Results.BadRequest(result.Error);
+            }
+
+            return Results.Json(result.Value);
         })
             .WithName("CreateAuction")
             .WithSummary("Creates an auction")
-            .WithDescription("Based on the provided data creates a new auction to the system.");
+            .WithDescription("Based on the provided data creates a new auction to the system.")
+            .Produces<CreateAuctionResponse>()
+            .ProducesProblem(StatusCodes.Status400BadRequest);
 
         auctionsGroup.MapGet("/{auctionId:guid}", async (Guid auctionId, IMediator mediator, CancellationToken cancellationToken) =>
         {

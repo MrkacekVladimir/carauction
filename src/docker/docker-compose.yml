@@ -1,4 +1,4 @@
-name: carauctionapp
+name: carauction
 services:
   processor:
     image: ${DOCKER_REGISTRY-}processor

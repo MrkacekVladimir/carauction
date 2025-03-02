@@ -1,6 +1,8 @@
-﻿using CarAuctionApp.Domain.Auctions.Entities;
+﻿using CarAuctionApp.Application.Features.Auctions.Dtos;
+using CarAuctionApp.Domain.Auctions.Entities;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Auctions.ValueObjects;
+using CarAuctionApp.SharedKernel;
 using CarAuctionApp.SharedKernel.Domain;
 using MediatR;
 using System;
@@ -9,24 +11,24 @@ using System.Threading.Tasks;
 
 namespace CarAuctionApp.Application.Features.Auctions.Commands;
 
-public record CreateAuctionCommand(string Title, DateTime StartsOn, DateTime EndsOn) : IRequest<Auction>;
+public record CreateAuctionCommand(string Title, DateTime StartsOn, DateTime EndsOn) : IRequest<Result<CreateAuctionResponse>>;
 
-public class CreateAuctionHandler(IAuctionRepository auctionRepository, IUnitOfWork unitOfWork) : IRequestHandler<CreateAuctionCommand, Auction>
+public record CreateAuctionResponse(AuctionDto Auction);
+
+public class CreateAuctionHandler(IAuctionRepository auctionRepository, IUnitOfWork unitOfWork) : IRequestHandler<CreateAuctionCommand, Result<CreateAuctionResponse>>
 {
-    public async Task<Auction> Handle(CreateAuctionCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CreateAuctionResponse>> Handle(CreateAuctionCommand request, CancellationToken cancellationToken)
     {
         var auctionDateResult = AuctionDate.Create(request.StartsOn, request.EndsOn);
         if (!auctionDateResult.IsSuccess || auctionDateResult.Value == null)
         {
-            //TODO: Remove exceptions
-            throw new Exception(auctionDateResult.Error.ToString());
+            return Result<CreateAuctionResponse>.Failure(auctionDateResult.Error);
         }
 
         var result = Auction.Create(request.Title, auctionDateResult.Value);
         if (!result.IsSuccess)
         {
-            //TODO: Remove exceptions
-            throw new Exception(result.Error.ToString());
+            return Result<CreateAuctionResponse>.Failure(auctionDateResult.Error);
         }
 
         var auction = result.Value!;
@@ -35,7 +37,8 @@ public class CreateAuctionHandler(IAuctionRepository auctionRepository, IUnitOfW
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return auction;
+        //TODO: Remove null hack, map to DTO
+        return Result<CreateAuctionResponse>.Success(new CreateAuctionResponse(null!));
 
     }
 }

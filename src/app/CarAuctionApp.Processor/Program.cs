@@ -10,6 +10,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
 using CarAuctionApp.Application.Extensions;
+using CarAuctionApp.Application.Authentication;
+using CarAuctionApp.Processor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +27,8 @@ builder.Services.AddHealthChecks();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddApplicationServices();
-builder.Services.AddPersistence(builder.Configuration.GetConnectionString("AppPostgres")!);
+builder.Services.AddSingleton<ICurrentUserProvider, NullCurrentUserProvider>();
+builder.Services.AddPersistence(builder.Configuration.GetConnectionString("Postgres")!);
 builder.Services.AddDomainServices();
 
 builder.Services.Configure<MessageBrokerSettings>(builder.Configuration.GetSection("MessageBroker"));
