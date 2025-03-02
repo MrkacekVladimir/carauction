@@ -9,12 +9,15 @@ using CarAuctionApp.SharedKernel.Domain;
 using CarAuctionApp.Application.Features.Auctions.Commands;
 using CarAuctionApp.Application.Features.Auctions.Queries;
 using CarAuctionApp.SharedKernel;
+using CarAuctionApp.WebApi.Models.Auctions;
+using CarAuctionApp.Application.Authentication;
+using CarAuctionApp.Application.Features.Auctions.Dtos;
 
 namespace CarAuctionApp.WebApi.Endpoints;
 
-internal static class AuctionEndpoints
+internal static class AuctionsEndpoints
 {
-    public static void MapAuctionEndpoints(this WebApplication app)
+    public static void MapAuctionsEndpoints(this WebApplication app)
     {
         var auctionsGroup = app.MapGroup("/auctions").WithTags("Auction");
 
@@ -39,26 +42,36 @@ internal static class AuctionEndpoints
             .Produces<SearchListByFullTextResponse>();
 
 
-        auctionsGroup.MapPost("/", async (CreateAuctionCommand command, IMediator mediator, CancellationToken cancellationToken) =>
+        auctionsGroup.MapPost("/", async (
+            CreateAuctionRequest request,
+            ICurrentUserProvider currentUserProvider,
+            IMediator mediator, CancellationToken cancellationToken) =>
         {
+            var user = await currentUserProvider.GetCurrentUserAsync();
+            if (user is null)
+            {
+                return Results.Unauthorized();
+            }
+
+            CreateAuctionCommand command = new CreateAuctionCommand(user.Id, request.Title, request.StartsOn, request.EndsOn);
             Result<CreateAuctionResponse> result = await mediator.Send(command, cancellationToken);
-            if(!result.IsSuccess)
+            if (!result.IsSuccess)
             {
                 return Results.BadRequest(result.Error);
             }
 
-            return Results.Json(result.Value);
+            return Results.CreatedAtRoute("GetAuctionById", new { auctionId = result.Value.Auction.Id }, result.Value);
         })
             .WithName("CreateAuction")
             .WithSummary("Creates an auction")
             .WithDescription("Based on the provided data creates a new auction to the system.")
-            .Produces<CreateAuctionResponse>()
+            .Produces<CreateAuctionResponse>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         auctionsGroup.MapGet("/{auctionId:guid}", async (Guid auctionId, IMediator mediator, CancellationToken cancellationToken) =>
         {
             GetAuctionByIdResponse response = await mediator.Send(new GetAuctionByIdQuery(auctionId), cancellationToken);
-            if(response.Auction is null)
+            if (response.Auction is null)
             {
                 return Results.NotFound();
             }
@@ -67,8 +80,10 @@ internal static class AuctionEndpoints
         })
             .WithName("GetAuctionById")
             .WithSummary("Gets an auction by UUID")
-            .WithDescription("Retrieves an auction from the system based on UUID");
-        
+            .WithDescription("Retrieves an auction from the system based on UUID")
+            .Produces<AuctionDto>()
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
 
         auctionsGroup.MapPut("/{auctionId:guid}", async (Guid auctionId, CreateAuctionCommand model, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
         {
@@ -84,19 +99,26 @@ internal static class AuctionEndpoints
             return Results.Json(auction);
         }).WithName("UpdateAuctionById"); //TODO: OpenAPI metadata
 
-        auctionsGroup.MapDelete("/{auctionId:guid}", async (Guid auctionId, IUnitOfWork unitOfWork, IAuctionRepository auctionRepository, CancellationToken cancellationToken) =>
+        auctionsGroup.MapDelete("/{auctionId:guid}", async (Guid auctionId, IMediator mediator, CancellationToken cancellationToken) =>
         {
-            var auction = await auctionRepository.GetById(auctionId);
-            if (auction is null)
+            Result result = await mediator.Send(new DeleteAuctionCommand(auctionId), cancellationToken);
+            if (!result.IsSuccess)
             {
-                return Results.NotFound();
+                //TODO: fix error codes, shouldnt be magic strings
+                return result.Error.Code switch
+                {
+                    "NotFound" => Results.NotFound(result.Error),
+                    _ => Results.BadRequest(result.Error)
+                };
             }
 
-            await auctionRepository.RemoveAsync(auction);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-
             return Results.Ok();
-        }).WithName("DeleteAuction"); //TODO: OpenAPI metadata
+        })
+            .WithName("DeleteAuction")
+            .WithSummary("Deletes an auction by UUID")
+            .WithDescription("Deletes an auction from the system based on UUID")
+            .Produces(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         auctionsGroup.MapGet("/{auctionId:guid}/bids", async (Guid auctionId, AuctionDbContext dbContext, CancellationToken cancellationToken) =>
         {
@@ -106,15 +128,25 @@ internal static class AuctionEndpoints
 
         auctionsGroup.MapPost("/{auctionId:guid}/bids", async (
             Guid auctionId,
-            CreateAuctionBidCommand model,
+            CreateAuctionBidRequest model,
+            ICurrentUserProvider currentUserProvider,
             IMediator mediator,
             IHubContext<AuctionHub, IAuctionHubClient> hubContext,
             CancellationToken cancellationToken
             ) =>
         {
-            Result<CreateAuctionBidResponse> result = await mediator.Send(model, cancellationToken);
-            if(!result.IsSuccess)
+            var user = await currentUserProvider.GetCurrentUserAsync();
+            if (user is null)
             {
+                return Results.Unauthorized();
+            }
+
+            CreateAuctionBidCommand command = new CreateAuctionBidCommand(auctionId, user.Id, model.Amount);
+
+            Result<CreateAuctionBidResponse> result = await mediator.Send(command, cancellationToken);
+            if (!result.IsSuccess)
+            {
+                //TODO: fix error codes, shouldnt be magic strings
                 return result.Error.Code switch
                 {
                     "Unauthorized" => Results.Unauthorized(),
@@ -123,18 +155,21 @@ internal static class AuctionEndpoints
                 };
             }
 
-            //TODO: Move sending price update to seperate service, because now we only send update to connected users to this application
-            //This will cause issues when we have multiple instances of this application
             AuctionBid bid = result.Value.AuctionBid;
+
+            //Notify all SignalR clients about the new bid
             await hubContext.Clients.Group(auctionId.ToString()).ReceiveBidUpdate(auctionId, bid.Id, bid.Amount.Value, bid.CreatedOn);
 
             //TODO: Meaningful response, maybe CreatedAt route and also return DTO 
             return Results.Ok();
-        }).WithName("CreateAuctionBid")
-        .Produces(StatusCodes.Status201Created)
-        .ProducesProblem(StatusCodes.Status400BadRequest)
-        .ProducesProblem(StatusCodes.Status401Unauthorized)
-        .ProducesProblem(StatusCodes.Status404NotFound);
+        })
+            .WithName("CreateAuctionBid")
+            .WithSummary("Creates a new auction bid")
+            .WithDescription("Creates a new bid for auction with passed GUID")
+            .Produces(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
     }
 

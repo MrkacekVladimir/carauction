@@ -1,7 +1,8 @@
-﻿using CarAuctionApp.Application.Authentication;
-using CarAuctionApp.Domain.Auctions.Entities;
+﻿using CarAuctionApp.Domain.Auctions.Entities;
 using CarAuctionApp.Domain.Auctions.Repositories;
 using CarAuctionApp.Domain.Auctions.ValueObjects;
+using CarAuctionApp.Domain.Users.Entities;
+using CarAuctionApp.Domain.Users.Repositories;
 using CarAuctionApp.SharedKernel;
 using CarAuctionApp.SharedKernel.Domain;
 using MediatR;
@@ -11,34 +12,35 @@ using System.Threading.Tasks;
 
 namespace CarAuctionApp.Application.Features.Auctions.Commands;
 
-public record CreateAuctionBidCommand(Guid AuctionId, decimal Amount) : IRequest<Result<CreateAuctionBidResponse>>;
+public record CreateAuctionBidCommand(Guid AuctionId, Guid UserId, decimal Amount) : IRequest<Result<CreateAuctionBidResponse>>;
 
 public record CreateAuctionBidResponse(AuctionBid AuctionBid);
 
 
 public class CreateAuctionBidCommandHandler(
-            ICurrentUserProvider currentUserProvider,
             IAuctionRepository auctionRepository,
-            IUnitOfWork unitOfWork) : IRequestHandler<CreateAuctionBidCommand, Result<CreateAuctionBidResponse>>
+            IUserRepository userRepository,
+            IUnitOfWork unitOfWork
+            ) : IRequestHandler<CreateAuctionBidCommand, Result<CreateAuctionBidResponse>>
 {
-    public async Task<Result<CreateAuctionBidResponse>> Handle(CreateAuctionBidCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CreateAuctionBidResponse>> Handle(CreateAuctionBidCommand command, CancellationToken cancellationToken)
     {
-        var user = await currentUserProvider.GetCurrentUserAsync();
+        User? user = await userRepository.GetById(command.UserId);
         if (user is null)
         {
             //TODO: Have constants based on the error codes
-            return Result<CreateAuctionBidResponse>.Failure(new Error("Unauthorized", "You are not authorized."));
+            return Result<CreateAuctionBidResponse>.Failure(new Error("NotFound", "User not found"));
         }
 
-        var auction = await auctionRepository.GetById(request.AuctionId);
+        Auction? auction = await auctionRepository.GetById(command.AuctionId);
         if (auction is null)
         {
             //TODO: Have constants based on the error codes
             return Result<CreateAuctionBidResponse>.Failure(new Error("NotFound", "Auction not found"));
         }
 
-        BidAmount amount = new(request.Amount);
-        var result = auction.AddBid(user, amount);
+        BidAmount amount = new(command.Amount);
+        Result<AuctionBid?> result = auction.AddBid(user, amount);
         if (!result.IsSuccess)
         {
             return Result<CreateAuctionBidResponse>.Failure(result.Error);

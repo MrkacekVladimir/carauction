@@ -12,6 +12,7 @@ using OpenTelemetry.Logs;
 using Serilog;
 using CarAuctionApp.Application.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,12 @@ builder.Services.AddOpenApi(options =>
     //options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR()
+    .AddStackExchangeRedis(builder.Configuration.GetConnectionString("Redis")!, options =>
+    {
+        options.Configuration.ChannelPrefix = RedisChannel.Literal("WebApi");
+    });
+
 builder.Services.AddHealthChecks();
 builder.Services.AddCors(options =>
 {
@@ -101,7 +107,7 @@ app.MapScalarApiReference(options =>
 app.UseCors("AllowAll");
 
 app.MapHealthChecks("/health");
-app.MapAuctionEndpoints();
+app.MapAuctionsEndpoints();
 app.MapHub<AuctionHub>("/hubs/auction");
 
 app.Run();

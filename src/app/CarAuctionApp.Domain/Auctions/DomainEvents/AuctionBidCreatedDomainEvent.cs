@@ -2,4 +2,4 @@
 
 namespace CarAuctionApp.Domain.Auctions.DomainEvents;
 
-public record AuctionBidCreatedDomainEvent(Guid AuctionId, Guid AuctionBidId, decimal Amount): IDomainEvent;
+public record AuctionBidCreatedDomainEvent(Guid BidId, Guid AuctionId, decimal Amount) : IDomainEvent;

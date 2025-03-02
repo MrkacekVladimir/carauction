@@ -34,6 +34,11 @@ internal sealed class AuctionTypeConfiguration : AggregateRootTypeConfiguration<
                 .IsRequired(false);
         });
 
+        builder.HasOne(builder => builder.Owner)
+          .WithMany()
+          .HasForeignKey(x => x.OwnerId)
+          .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(x => x.Bids)
           .WithOne(x => x.Auction)
           .HasForeignKey(x => x.AuctionId)

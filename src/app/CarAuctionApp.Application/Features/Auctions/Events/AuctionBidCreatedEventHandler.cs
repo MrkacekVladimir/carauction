@@ -13,7 +13,7 @@ public class AuctionBidCreatedEventHandler(IIntegrationEventPublisher publisher)
     public async Task Handle(DomainEventNotification<AuctionBidCreatedDomainEvent> notification, CancellationToken cancellationToken)
     {
         var domainEvent = notification.DomainEvent;
-        var integrationEvent = new AuctionBidCreatedIntegrationEvent(domainEvent.AuctionId, domainEvent.AuctionBidId, domainEvent.Amount);
+        var integrationEvent = new AuctionBidCreatedIntegrationEvent(domainEvent.BidId, domainEvent.AuctionId, domainEvent.Amount);
 
         await publisher.PublishAsync(integrationEvent, cancellationToken);
     }

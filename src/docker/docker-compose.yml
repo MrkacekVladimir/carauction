@@ -1,16 +1,17 @@
 name: carauction
 services:
-  processor:
-    image: ${DOCKER_REGISTRY-}processor
-    build:
-      context: .
-      dockerfile: ../app/CarAuctionApp.Processor/Dockerfile
 
   webapi:
     image: ${DOCKER_REGISTRY-}webapi
     build:
       context: .
       dockerfile: ../app/CarAuctionApp.WebApi/Dockerfile
+
+  processor:
+    image: ${DOCKER_REGISTRY-}processor
+    build:
+      context: .
+      dockerfile: ../app/CarAuctionApp.Processor/Dockerfile
 
   reporting-webapi:
     image: ${DOCKER_REGISTRY-}reportingwebapi
@@ -20,6 +21,9 @@ services:
 
   postgres:
     image: postgres:17
+
+  redis:
+    image: redis:6
 
   rabbitmq:
     image: rabbitmq:4-management
